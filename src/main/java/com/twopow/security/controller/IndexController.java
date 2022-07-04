@@ -39,7 +39,7 @@ public class IndexController {
 
     @GetMapping("/test/oauth/login")
     public @ResponseBody String testOAuthLogin(Authentication authentication, @AuthenticationPrincipal OAuth2User oauth){
-        //Authentication 객체로도 접근 가능하고 @AuthenticationPrincipal 어노테이션으로도 접근 가능
+        //Authentication 객체로도 접근 가능하고 @AuthenticationPrincipal 어노테이션으로도 접근 가능! 대신 타입이 OAuth2User type이다.
         //DI(의존성주입)
         System.out.println("/test/oauth/login/==========");
         OAuth2User oauth2User =(OAuth2User) authentication.getPrincipal();//다운캐스팅
@@ -58,7 +58,8 @@ public class IndexController {
         return "index";//src/main/resources/templates/index.mustache
     }
     @GetMapping("/user")
-    public @ResponseBody String user(){
+    public @ResponseBody String user(@AuthenticationPrincipal PrincipalDetails principalDetails){
+        System.out.println("principalDetails:"+principalDetails.getUser());
 
          return "user";
     }
