@@ -1,5 +1,6 @@
 package com.twopow.security.model;
 
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -20,6 +21,21 @@ public class User {
     private String password;
     private String email;
     private String role;//ROLE_USER,ROLE_ADMIN
+
+    private String provider;
+    private String providerId;
     @CreationTimestamp
     private Timestamp createDate;
+
+    @Builder
+    public User(String username, String password, String email, String role, String provider, String providerId, Timestamp createDate) {
+        //회원가입 할거니깐 id는 지운다
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.provider = provider;
+        this.providerId = providerId;
+        this.createDate = createDate;
+    }
 }
