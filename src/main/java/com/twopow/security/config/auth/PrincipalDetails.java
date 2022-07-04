@@ -6,6 +6,7 @@ package com.twopow.security.config.auth;
 //user 오브젝트 타입=>UserDetails 타입 객체.
 
 import com.twopow.security.model.User;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 //Security Session=>Authentication=>UserDetails
+@Data
 public class PrincipalDetails implements UserDetails {
     private User user;//콤포지션
     public PrincipalDetails(User user){
