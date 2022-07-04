@@ -9,18 +9,29 @@ import com.twopow.security.model.User;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 //Security Session=>Authentication=>UserDetails
 @Data
-public class PrincipalDetails implements UserDetails {
+public class PrincipalDetails implements UserDetails,OAuth2User {
     private User user;//콤포지션
+    private Map<String,Object> attributes;
+    
+    //일반로그인
     public PrincipalDetails(User user){
         this.user=user;
     }
     //해당 유저의 권한을 리턴하는곳
+
+    //OAuth로그인인
+   public PrincipalDetails(User user,Map<String,Object>attributes){
+        this.user=user;
+        this.attributes=attributes;
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collect = new ArrayList<>();
@@ -61,5 +72,17 @@ public class PrincipalDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    //아래 2개(getAttributes,getName)은 OAuth2User implements 해서 생긴 메서드
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getName() {
+        //return attributes.get("sub"); 라고 하면 되지만 안중요해서 그냥 null리턴하기로 함
+        return null;
     }
 }
