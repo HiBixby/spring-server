@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
@@ -32,57 +33,48 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         //구글 로그인 버튼 클릭->구글 로그인창->로그인을 완료->code를 리턴(Oauth-client 라이브러리)->AccessToken 요청
         //userRequest정보->loadUser함수 호출->구글로부터 회원 프로필 받아준다.
         //System.out.println("userRequest:"+super.loadUser(userRequest).getAttributes());
-        OAuth2User oauth2User=super.loadUser(userRequest);
-        System.out.println("getAttributes:"+oauth2User.getAttributes());
+        OAuth2User oAuth2User=super.loadUser(userRequest);
+        System.out.println("getAttributes:"+oAuth2User.getAttributes());
 
         OAuth2UserInfo oAuth2UserInfo=null;
         if(userRequest.getClientRegistration().getRegistrationId().equals("google")){
             System.out.println("구글 로그인 요청");
-            oAuth2UserInfo=new GoogleUserInfo(oauth2User.getAttributes());
+            oAuth2UserInfo=new GoogleUserInfo(oAuth2User.getAttributes());
         }
         else if(userRequest.getClientRegistration().getRegistrationId().equals("facebook")){
             System.out.println("페이스북 로그인 요청");
-            oAuth2UserInfo=new FacebookUserInfo(oauth2User.getAttributes());
+            oAuth2UserInfo=new FacebookUserInfo(oAuth2User.getAttributes());
         }
         else if(userRequest.getClientRegistration().getRegistrationId().equals("naver")){
             System.out.println("네이버 로그인 요청");
-            oAuth2UserInfo=new NaverUserInfo((Map)oauth2User.getAttributes().get("response"));
+            oAuth2UserInfo=new NaverUserInfo((Map)oAuth2User.getAttributes().get("response"));
         }
         else{
             System.out.println("지원하지 않는 플랫폼 입니다.");
         }
 
 
-        String provider = oAuth2UserInfo.getProvider();
-        System.out.println(provider);
-        String providerId=oAuth2UserInfo.getProviderId();
-        System.out.println(providerId);
-        String username=provider+"_"+providerId;
-        System.out.println(username);
-        String password= new BCryptPasswordEncoder().encode("이에이승팀테스트용비밀키");
-        System.out.println(password);
-        String role="ROLE_USER";
-        String email=oAuth2UserInfo.getEmail();
-        System.out.println(email);
+        Optional<User> userOptional =
+                userRepository.findByProviderAndProviderId(oAuth2UserInfo.getProvider(), oAuth2UserInfo.getProviderId());
 
-        User userEntity = userRepository.findByUsername(username);
-        if(userEntity==null){ //가입한적 없는경우
-            System.out.println("첫번째 로그인");
-            userEntity=User.builder()
-                    .username(username)
-                    .password(password)
-                    .email(email)
-                    .role(role)
-                    .provider(provider)
-                    .providerId(providerId)
+        User user;
+        if (userOptional.isPresent()) {
+            user = userOptional.get();
+            // user가 존재하면 update 해주기
+            user.setEmail(oAuth2UserInfo.getEmail());
+            userRepository.save(user);
+        } else {
+            // user의 패스워드가 null이기 때문에 OAuth 유저는 일반적인 로그인을 할 수 없음.
+            user = User.builder()
+                    .username(oAuth2UserInfo.getProvider() + "_" + oAuth2UserInfo.getProviderId())
+                    .email(oAuth2UserInfo.getEmail())
+                    .role("ROLE_USER")
+                    .provider(oAuth2UserInfo.getProvider())
+                    .providerId(oAuth2UserInfo.getProviderId())
                     .build();
-            userRepository.save(userEntity);
-        }
-        else{
-            System.out.println("로그인 이미 한적이 있음");
+            userRepository.save(user);
         }
 
-        //return super.loadUser(userRequest);
-        return new PrincipalDetails(userEntity,oauth2User.getAttributes());
+        return new PrincipalDetails(user, oAuth2User.getAttributes());
     }
 }
