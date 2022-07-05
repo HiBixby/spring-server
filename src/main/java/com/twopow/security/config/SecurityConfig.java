@@ -2,7 +2,7 @@ package com.twopow.security.config;
 //구글 로그인이 완료된 뒤의 후처리가 필요함. 1.코드받기(인증),2.액세스토큰(권한),3.사용자 프로필 정보를 가져오고
 //4-1.그 정보를 토대로 자동 회원가입
 //4-2 추가정보 받아서 회원가입
-//import com.twopow.security.config.oauth.OAuth2SuccessHandler;
+import com.twopow.security.config.oauth.OAuth2SuccessHandler;
 import com.twopow.security.config.oauth.PrincipalOauth2UserService;
 import com.twopow.security.filter.MyFilter1;
 import com.twopow.security.jwt.JwtAuthenticationFilter;
@@ -30,7 +30,7 @@ public class
 SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsFilter corsFilter;
     private final UserRepository userRepository;
-    //private final OAuth2SuccessHandler successHandler;
+    private final OAuth2SuccessHandler successHandler;
     @Autowired
     private PrincipalOauth2UserService principalOauth2UserService;
     @Bean
@@ -66,7 +66,7 @@ SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()*/
                 .oauth2Login()
                 .loginPage("/loginForm") //Tip.코드X 액세스토큰+사용자프로필정보를 한방에 받는다
-                //.successHandler(successHandler)
+                .successHandler(successHandler)
                 .userInfoEndpoint()
                 .userService(principalOauth2UserService);
     }
