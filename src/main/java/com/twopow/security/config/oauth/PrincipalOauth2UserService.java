@@ -42,10 +42,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         }
         else if(userRequest.getClientRegistration().getRegistrationId().equals("facebook")){
             System.out.println("페이스북 로그인 요청");
-            oAuth2UserInfo=new NaverUserInfo((Map)oauth2User.getAttributes().get("response"));
+            oAuth2UserInfo=new FacebookUserInfo(oauth2User.getAttributes());
         }
         else if(userRequest.getClientRegistration().getRegistrationId().equals("naver")){
-
+            System.out.println("네이버 로그인 요청");
+            oAuth2UserInfo=new NaverUserInfo((Map)oauth2User.getAttributes().get("response"));
         }
         else{
             System.out.println("지원하지 않는 플랫폼 입니다.");
@@ -53,11 +54,16 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
 
         String provider = oAuth2UserInfo.getProvider();
+        System.out.println(provider);
         String providerId=oAuth2UserInfo.getProviderId();
+        System.out.println(providerId);
         String username=provider+"_"+providerId;
+        System.out.println(username);
         String password= new BCryptPasswordEncoder().encode("이에이승팀테스트용비밀키");
+        System.out.println(password);
         String role="ROLE_USER";
         String email=oAuth2UserInfo.getEmail();
+        System.out.println(email);
 
         User userEntity = userRepository.findByUsername(username);
         if(userEntity==null){ //가입한적 없는경우
