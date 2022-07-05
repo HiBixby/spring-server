@@ -64,19 +64,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
 
-    //attemptAuthentication 실행 후 인증이 정상적으로 되었으면 successfulAuthentication 함수가 실행된다.
-    //JWT 토큰을 만들어서 request 요청한 사용자에게 jwt 만들어주면된다.
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        System.out.println("successfulAuthentication 실행됨: 인증이 완료되었다는 뜻");
-        PrincipalDetails principalDetails=(PrincipalDetails) authResult.getPrincipal();
-
-        String jwtToken= JWT.create()
-                .withSubject("2-pow Token")
-                .withExpiresAt(new Date(System.currentTimeMillis()+(60000) *30)) //30min
-                .withClaim("id",principalDetails.getUser().getId())
-                .withClaim("username",principalDetails.getUser().getUsername())
-                                .sign(Algorithm.HMAC512("2powTeam"));
-        response.addHeader("Authhorization","Bearer "+jwtToken);
-    }
+//    //attemptAuthentication 실행 후 인증이 정상적으로 되었으면 successfulAuthentication 함수가 실행된다.
+//    //JWT 토큰을 만들어서 request 요청한 사용자에게 jwt 만들어주면된다.
+//    @Override
+//    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+//        System.out.println("successfulAuthentication 실행됨: 인증이 완료되었다는 뜻");
+//        PrincipalDetails principalDetails=(PrincipalDetails) authResult.getPrincipal();
+//
+//        String jwtToken= JWT.create()
+//                .withSubject("2-pow Token")
+//                .withExpiresAt(new Date(System.currentTimeMillis()+(60000) *30)) //30min
+//                .withClaim("id",principalDetails.getUser().getId())
+//                .withClaim("username",principalDetails.getUser().getUsername())
+//                                .sign(Algorithm.HMAC512("2powTeam"));
+//        response.addHeader("Authhorization","Bearer "+jwtToken);
+//    }
 }
