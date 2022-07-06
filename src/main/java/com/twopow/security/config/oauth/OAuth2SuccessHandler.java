@@ -58,7 +58,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 
         //인증 후 oauth2/redirect/+jwtToken 으로 redirect 했을때
-        targetUrl=UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect"+"?token="+jwtToken)
+        targetUrl=UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect"+"?userToken="+jwtToken)
                 .build().toUriString();
 //        //인증 후 interview로 redirect했을때
 //        targetUrl=UriComponentsBuilder.fromUriString("http://localhost:3000/interview")
