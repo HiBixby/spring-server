@@ -3,6 +3,7 @@ package com.twopow.security.config.oauth;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.twopow.security.config.auth.PrincipalDetails;
+import com.twopow.security.model.JoinedUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Date;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,6 +36,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //
 //        log.info("Principal에서 꺼낸 OAuth2User = {}", oAuth2User);
 //        // 최초 로그인이라면 회원가입 처리를 한다.
+        ObjectMapper objectMapper = new ObjectMapper();
         String targetUrl;
         log.info("토큰 발행 시작");
 
@@ -63,12 +67,25 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //                .build().toUriString();
 
         //인증 후 oauth2/redirect/+jwtToken 으로 redirect 했을때
-        targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect" + "?userToken=" + jwtToken + "&email=" + email + "&username=" + encodedname + "&profileImgUrl=" + picture)
+        targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect")
                 .build().toUriString();
 //        //인증 후 interview로 redirect했을때
 //        targetUrl=UriComponentsBuilder.fromUriString("http://localhost:3000/interview")
 //                .build().toUriString();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
+        JoinedUser joinedUser=new JoinedUser();
+        joinedUser.setUserToken(jwtToken);
+        joinedUser.setEmail(email);
+        joinedUser.setUsername(encodedname);
+        joinedUser.setProfileImageUrl(picture);
+
+
+        //{"username":"choi", "age":28}
+        String result = objectMapper.writeValueAsString(joinedUser);//class를 파싱하여 json 형식 string으로 변환
+        response.getWriter().write(result);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
+
     }
 }
