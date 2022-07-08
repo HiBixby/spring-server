@@ -25,6 +25,7 @@ public class User {
     @Id // primary key
     @GeneratedValue(strategy = GenerationType.IDENTITY)//autoincrement
     private int id;
+    private String name;
     private String username;
     private String password;
     private String email;
@@ -34,4 +35,5 @@ public class User {
     private String providerId;
     @CreationTimestamp
     private Timestamp createDate;
+    private String picture;
 }
