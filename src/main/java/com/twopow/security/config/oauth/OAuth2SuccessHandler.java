@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Date;
 
 @Slf4j
@@ -38,16 +39,21 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         ///////////////////////////////////////////////////////////////////
         System.out.println("successfulAuthentication 실행됨: 인증이 완료되었다는 뜻");
-        PrincipalDetails principalDetails=(PrincipalDetails) authentication.getPrincipal();
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
-        String jwtToken= JWT.create()
+        String email = principalDetails.getUser().getEmail();
+        String name = principalDetails.getUser().getName();
+        String picture = principalDetails.getUser().getPicture();
+
+        String encodedname = URLEncoder.encode(name, "UTF-8");
+
+        String jwtToken = JWT.create()
                 .withSubject("2-pow Token")
-                .withExpiresAt(new Date(System.currentTimeMillis()+(60000) *30)) //30min
-                .withClaim("id",principalDetails.getUser().getId())
-                .withClaim("username",principalDetails.getUser().getUsername())
+                .withExpiresAt(new Date(System.currentTimeMillis() + (60000) * 30)) //30min
+                .withClaim("id", principalDetails.getUser().getId())
+                .withClaim("username", principalDetails.getUser().getUsername())
                 .sign(Algorithm.HMAC512("2powTeam"));
-        response.addHeader("Authhorization","Bearer "+jwtToken);
-
+        response.addHeader("Authhorization", "Bearer " + jwtToken);
 
 
 //        Token token = tokenService.generateToken(userDto.getEmail(), "USER");
@@ -56,9 +62,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //                .queryParam("token", "token")
 //                .build().toUriString();
 
-
         //인증 후 oauth2/redirect/+jwtToken 으로 redirect 했을때
-        targetUrl=UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect"+"?userToken="+jwtToken)
+        targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect" + "?userToken=" + jwtToken + "&email=" + email + "&username=" + encodedname + "&profileImgUrl=" + picture)
                 .build().toUriString();
 //        //인증 후 interview로 redirect했을때
 //        targetUrl=UriComponentsBuilder.fromUriString("http://localhost:3000/interview")
