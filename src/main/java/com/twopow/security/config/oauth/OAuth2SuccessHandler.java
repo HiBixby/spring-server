@@ -44,8 +44,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .sign(Algorithm.HMAC512("2powTeam"));
 
 
-
-
         targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect?userToken="+jwtToken)
                 .build().toUriString();
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
