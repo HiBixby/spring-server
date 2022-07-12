@@ -4,10 +4,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.twopow.security.config.auth.PrincipalDetails;
 import com.twopow.security.model.JoinedUser;
+import org.hibernate.mapping.Join;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,8 +21,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class RestLoginController {
-    @RequestMapping("/oauth/redirect")
+    @GetMapping("/oauth/redirect")
     public JoinedUser oauthRedirect(Authentication authentication, @AuthenticationPrincipal OAuth2User oauth){
+
         ObjectMapper objectMapper=new ObjectMapper();
         PrincipalDetails principalDetails=(PrincipalDetails)authentication.getPrincipal();
 
@@ -48,5 +51,9 @@ public class RestLoginController {
         joinedUser.setProfileImageUrl(picture);
 
         return joinedUser;
+    }
+    @GetMapping("/hello")
+    public String Hello(){
+        return "hello";
     }
 }
