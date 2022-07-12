@@ -54,7 +54,7 @@ public class RestLoginController {
     }
 
 
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/afterLogin")
     public void afterLogin(HttpServletResponse response, @AuthenticationPrincipal PrincipalDetails principalDetails) throws IOException {
         Collection<? extends GrantedAuthority> roles = principalDetails.getAuthorities();
