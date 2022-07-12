@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class RestLoginController {
-    @GetMapping("/oauth/redirect")
+    @GetMapping("/oauth2/redirect")
     public JoinedUser oauthRedirect(Authentication authentication, @AuthenticationPrincipal OAuth2User oauth){
 
         ObjectMapper objectMapper=new ObjectMapper();

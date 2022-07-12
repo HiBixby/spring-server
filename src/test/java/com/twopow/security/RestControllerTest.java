@@ -71,14 +71,15 @@ public class RestControllerTest {
                 .providerId("123456789")
                 .picture("https://ssl.pstatic.net/static/newsstand/up/2013/0813/nsd114029379.gif")
                 .build();
-        user = userRepository.save(user);
+        userRepository.save(user);
     }
 
 
     @Test
     public void oauth_인증시200코드() throws Exception {
-        PrincipalDetails principalDetails=new PrincipalDetails(user,null);
-        mvc.perform(get("/oauth/redirect").with(user(principalDetails))).andExpect(status().isOk());
+        PrincipalDetails principalDetails = new PrincipalDetails(user, null);
+        mvc.perform(get("/oauth2/redirect").with(user(principalDetails)))
+                .andExpect(status().isOk());
 
     }
 
