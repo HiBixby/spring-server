@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 
@@ -33,9 +34,20 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             throws IOException, ServletException {
         ObjectMapper objectMapper = new ObjectMapper();
         String targetUrl;
-        targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect")
+        PrincipalDetails principalDetails=(PrincipalDetails)authentication.getPrincipal();
+
+        String jwtToken = JWT.create()
+                .withSubject("2-pow Token")
+                .withExpiresAt(new Date(System.currentTimeMillis() + (60000) * 30)) //30min
+                .withClaim("id", principalDetails.getUser().getId())
+                .withClaim("username", principalDetails.getUser().getUsername())
+                .sign(Algorithm.HMAC512("2powTeam"));
+
+
+        targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect?userToken="+jwtToken)
                 .build().toUriString();
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
+
 
     }
 }
