@@ -1,6 +1,8 @@
 package com.twopow.security;
 
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.twopow.security.config.SecurityConfig;
 import com.twopow.security.config.auth.PrincipalDetails;
 import com.twopow.security.config.oauth.OAuth2SuccessHandler;
@@ -44,6 +46,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 
+import java.util.Date;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -54,6 +58,7 @@ public class RestControllerTest {
     private UserRepository userRepository;
     private MockMvc mvc;
     private User user;
+    private String jwtToken;
 
     @Before
     public void setup() {
@@ -72,6 +77,13 @@ public class RestControllerTest {
                 .picture("https://ssl.pstatic.net/static/newsstand/up/2013/0813/nsd114029379.gif")
                 .build();
         userRepository.save(user);
+
+        jwtToken = JWT.create()
+                .withSubject("2-pow Token")
+                .withExpiresAt(new Date(System.currentTimeMillis() + (60000) * 30)) //30min
+                .withClaim("id", 1)
+                .withClaim("username", "naver_123456789")
+                .sign(Algorithm.HMAC512("2powTeam"));
     }
 
 
@@ -92,4 +104,9 @@ public class RestControllerTest {
 
     }
 
+    @Test
+    public void afterLoginApi_실행시200코드() throws Exception{
+        PrincipalDetails principalDetails = new PrincipalDetails(user, null);
+        mvc.perform(get("/afterLogin").with(user(principalDetails)).header("Authorization","Bearer "+jwtToken)).andExpect(status().isOk());
+    }
 }

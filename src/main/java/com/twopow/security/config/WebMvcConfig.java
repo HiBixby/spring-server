@@ -16,13 +16,6 @@ public class WebMvcConfig implements WebMvcConfigurer{
         resolver.setContentType("text/html; charset=UTF-8");
         resolver.setPrefix("classpath:/templates/");
         resolver.setSuffix(".html");
-
         registry.viewResolver(resolver);
-    }
-    @Override
-    public void addCorsMappings(CorsRegistry registry){
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedMethods("OPTIONS","GET","POST","PUT","DELETE");
     }
 }
