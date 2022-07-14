@@ -4,7 +4,6 @@ package com.twopow.security.config;
 //4-2 추가정보 받아서 회원가입
 import com.twopow.security.config.oauth.OAuth2SuccessHandler;
 import com.twopow.security.config.oauth.PrincipalOauth2UserService;
-import com.twopow.security.filter.MyFilter1;
 import com.twopow.security.jwt.JwtAuthenticationFilter;
 import com.twopow.security.jwt.JwtAuthorizationFilter;
 import com.twopow.security.repository.UserRepository;
@@ -40,7 +39,6 @@ SecurityConfig extends WebSecurityConfigurerAdapter {
     }
     @Override
     protected void configure(HttpSecurity http)throws Exception {
-        //http.addFilterBefore(new MyFilter1(), SecurityContextPersistenceFilter.class);
 
 
         http.csrf().disable();
