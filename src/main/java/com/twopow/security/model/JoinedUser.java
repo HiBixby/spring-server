@@ -1,13 +1,19 @@
 package com.twopow.security.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
 
-@Getter
-@Setter
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class JoinedUser {
-    private String userToken;
     private String username;
     private String email;
-    private String profileImageUrl;
+    private String picture;
+    private String Address;
 }
