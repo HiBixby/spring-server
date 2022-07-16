@@ -54,6 +54,8 @@ SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/user/**").authenticated()
+                .antMatchers("/auth/**").authenticated()
+                .antMatchers("/register/**").authenticated()
                 .antMatchers("/manager/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
                 .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll()
@@ -64,7 +66,7 @@ SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/")
                 .and()*/
                 .oauth2Login()
-                .loginPage("/loginForm") //Tip.코드X 액세스토큰+사용자프로필정보를 한방에 받는다
+                .loginPage("/") //Tip.코드X 액세스토큰+사용자프로필정보를 한방에 받는다
                 .successHandler(successHandler)
                 .userInfoEndpoint()
                 .userService(principalOauth2UserService);
