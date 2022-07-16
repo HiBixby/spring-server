@@ -1,78 +1,49 @@
 package com.twopow.security.controller;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.twopow.security.config.auth.AuthInfoService;
 import com.twopow.security.config.auth.PrincipalDetails;
 import com.twopow.security.model.JoinedUser;
-import com.twopow.security.model.User;
-import org.hibernate.mapping.Join;
-import org.springframework.security.access.prepost.PreAuthorize;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@RequiredArgsConstructor
 @RestController
 public class RestLoginController {
+    private final AuthInfoService authInfoService;
+
     @GetMapping("/hello")
     public String Hello() {
         return "hello";
     }
 
     @GetMapping("/auth/info")
-    public JoinedUser authRole(HttpServletResponse response,Authentication authentication) throws JsonProcessingException {
+    public ResponseEntity<?> authRole(HttpServletResponse response, Authentication authentication){
         JoinedUser joinedUser;
-        joinedUser=JoinedUser.builder().build();
-
-        if(authentication != null){
+        //HttpHeaders headers = new HttpHeaders();
+        if (authentication != null) {
             PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
             joinedUser = JoinedUser.builder()
                     .username(principalDetails.getUser().getName())
                     .email(principalDetails.getUser().getEmail())
                     .picture(principalDetails.getUser().getPicture())
-                    .Address(principalDetails.getUser().getAddress())
+                    .address(principalDetails.getUser().getAddress())
                     .build();
-        }else{
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return ResponseEntity.ok().body(joinedUser);
+        } else {
+            return ResponseEntity.status(401).body(null);
         }
-        return joinedUser;
     }
 
-    @GetMapping("/afterLogin")
-    public void afterLogin(HttpServletResponse response, Authentication authentication) throws IOException {
-
-        if (true) {
-            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-            String role = principalDetails.getUser().getRole();
-
-            if (Objects.equals(role, "ROLE_USER")) {
-                int status=308;
-                response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
-                response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-                response.setHeader("Location", "http://localhost:3000/Register");
-                response.setHeader("Connection", "close");
-            } else if (Objects.equals(role, "ROLE_VERIFIED")) {
-                response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-                response.setHeader("Access-Control-Allow-Origin", "*");
-                response.setHeader("Location", "http://localhost:3000/Interview");
-                response.setHeader("Connection", "close");
-            } else {
-                response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-                response.setHeader("Access-Control-Allow-Origin", "*");
-                response.setHeader("Location", "http://localhost:3000");
-                response.setHeader("Connection", "close");
-            }
-        }else{
-            response.setStatus(HttpServletResponse.SC_OK);
-        }
+    @PostMapping("/register")
+    public ResponseEntity<?> register(HttpServletRequest request, Authentication authentication) {
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        String address = request.getParameter("address");
+        authInfoService.주소저장(principalDetails, address);
+        return ResponseEntity.ok().body(address);
     }
 }
