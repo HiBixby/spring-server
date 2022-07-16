@@ -36,5 +36,5 @@ public class User {
     @CreationTimestamp
     private Timestamp createDate;
     private String picture;
-    private String Address;
+    private String address;
 }

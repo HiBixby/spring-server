@@ -15,5 +15,5 @@ public class JoinedUser {
     private String username;
     private String email;
     private String picture;
-    private String Address;
+    private String address;
 }
