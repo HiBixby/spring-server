@@ -1,6 +1,12 @@
 package com.twopow.security.controller;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twopow.security.config.auth.PrincipalDetails;
+import com.twopow.security.model.JoinedUser;
+import com.twopow.security.model.User;
+import org.hibernate.mapping.Join;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +26,25 @@ public class RestLoginController {
     @GetMapping("/hello")
     public String Hello() {
         return "hello";
+    }
+
+    @GetMapping("/auth/info")
+    public JoinedUser authRole(HttpServletResponse response,Authentication authentication) throws JsonProcessingException {
+        JoinedUser joinedUser;
+        joinedUser=JoinedUser.builder().build();
+
+        if(authentication != null){
+            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+            joinedUser = JoinedUser.builder()
+                    .username(principalDetails.getUser().getName())
+                    .email(principalDetails.getUser().getEmail())
+                    .picture(principalDetails.getUser().getPicture())
+                    .Address(principalDetails.getUser().getAddress())
+                    .build();
+        }else{
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
+        return joinedUser;
     }
 
     @GetMapping("/afterLogin")
