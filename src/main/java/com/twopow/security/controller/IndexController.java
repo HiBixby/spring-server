@@ -58,7 +58,6 @@
 //        return "index";//src/main/resources/templates/index.mustache
 //    }
 //
-//
 //    //Oauth 로그인 해도 PrincipalDetails
 //    //일반 로그인을 해도 PrincipalDetails
 //    @GetMapping("/user")
