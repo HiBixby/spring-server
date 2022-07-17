@@ -64,7 +64,6 @@
 //    //@AuthenticationPrincipal 어노테이션으로 접근하면 다운캐스팅 안하고 바로 접근 가능
 //    public @ResponseBody String user(@AuthenticationPrincipal PrincipalDetails principalDetails){
 //        System.out.println("principalDetails:"+principalDetails.getUser());
-//
 //         return "user";
 //    }
 //    @GetMapping("/admin")
