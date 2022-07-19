@@ -10,10 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 @RequiredArgsConstructor
 @RestController
@@ -45,6 +42,6 @@ public class RestApiController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Register register, Authentication authentication) {
-        return authInfoService.주소저장(register, authentication);
+        return authInfoService.회원주소저장(register, authentication);
     }
 }

@@ -46,7 +46,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String jwtToken = request.getHeader("Authorization").replace("Bearer ", "");
         //서명이 정상적으로 되었다면 username을 들고온다.
 
-        DecodedJWT decodedJwtToken = JwtUtil.decodeToken(jwtToken);
+        DecodedJWT decodedJwtToken = JwtUtil.DecodeToken(jwtToken);
         // jwt 토큰이 올바르면 decodedUJwtToken을 잘 가져온다
         System.out.println("디코드된 토큰 : "+decodedJwtToken);
         if (decodedJwtToken != null) {

@@ -11,13 +11,12 @@ import java.sql.Timestamp;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorMessage {
-    @CreationTimestamp
     private Timestamp timestamp;
-    int status;
-    String error;
-    String trace;
-    String message;
-    String path;
+    private int status;
+    private String error;
+    private String trace;
+    private String message;
+    private String path;
 }
 
 

@@ -37,4 +37,5 @@ public class User {
     private Timestamp createDate;
     private String picture;
     private String address;
+    private String refreshToken;
 }
