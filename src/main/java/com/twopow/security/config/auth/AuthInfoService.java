@@ -17,7 +17,7 @@ import java.util.Optional;
 public class AuthInfoService {
     private final UserRepository userRepository;
     @Transactional
-    public String 주소저장(Register register, Authentication authentication){
+    public ResponseEntity<?> 주소저장(Register register, Authentication authentication){
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         String address = register.getAddress();
         System.out.println("프론트에서 받은 주소 : "+address);
@@ -26,9 +26,14 @@ public class AuthInfoService {
         userOptional = userRepository.findByProviderAndProviderId(principalDetails.getUser().getProvider(),principalDetails.getUser().getProviderId());
         if(userOptional.isPresent()){
             user=userOptional.get();
-            user.setAddress(address);
-            userRepository.save(user);
-            return address;
+            if (user.getAddress()==null){
+                user.setAddress(address);
+                userRepository.save(user);
+                return ResponseEntity.ok().body(address);
+            }
+            else{
+                return ResponseEntity.badRequest().body(null);
+            }
         }
         return null;
     }
