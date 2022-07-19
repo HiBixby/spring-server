@@ -3,6 +3,8 @@ package com.twopow.security.config.oauth;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.twopow.security.config.auth.PrincipalDetails;
+import com.twopow.security.jwt.JwtUtil;
+import com.twopow.security.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -23,21 +25,12 @@ import java.util.Date;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-            throws IOException, ServletException {
-        String targetUrl;
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-
-        String jwtToken = JWT.create()
-                .withSubject("2-pow Token")
-                .withExpiresAt(new Date(System.currentTimeMillis() + (60000) * 30)) //30min
-                .withClaim("id", principalDetails.getUser().getId())
-                .withClaim("username", principalDetails.getUser().getUsername())
-                .sign(Algorithm.HMAC512("2powTeam"));
-
-        targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect?userToken=" + jwtToken)
+            throws IOException {
+        User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
+        String jwtToken = JwtUtil.CreateToken(user, 30);
+        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect").queryParam("userToken",jwtToken)
                 .build().toUriString();
+
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
-
-
     }
 }
