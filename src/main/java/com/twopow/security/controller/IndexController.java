@@ -58,14 +58,12 @@
 //        return "index";//src/main/resources/templates/index.mustache
 //    }
 //
-//
 //    //Oauth 로그인 해도 PrincipalDetails
 //    //일반 로그인을 해도 PrincipalDetails
 //    @GetMapping("/user")
 //    //@AuthenticationPrincipal 어노테이션으로 접근하면 다운캐스팅 안하고 바로 접근 가능
 //    public @ResponseBody String user(@AuthenticationPrincipal PrincipalDetails principalDetails){
 //        System.out.println("principalDetails:"+principalDetails.getUser());
-//
 //         return "user";
 //    }
 //    @GetMapping("/admin")
