@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.twopow.security.config.auth.PrincipalDetails;
 import com.twopow.security.jwt.JwtUtil;
 import com.twopow.security.model.User;
+import com.twopow.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -22,12 +23,15 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+    private final UserRepository userRepository;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException {
         User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
         String accessToken = JwtUtil.CreateToken(user, JwtUtil.Minutes(30));
         String refreshToken = JwtUtil.CreateToken(user, JwtUtil.Days(14));
+        user.setRefreshToken(refreshToken);
+        userRepository.save(user);
         String targetUrl = UriComponentsBuilder
                 .fromUriString("http://localhost:3000/oauth2/redirect")
                 .queryParam("userToken", accessToken)
