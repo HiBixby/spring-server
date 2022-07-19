@@ -63,10 +63,13 @@ public class RestControllerTest {
 
 
     @Test
-    public void oauth_인증시200코드() throws Exception {
+    public void 회원정보를가져온다() throws Exception {
         PrincipalDetails principalDetails = new PrincipalDetails(user, null);
-        mvc.perform(get("/oauth2/redirect").with(user(principalDetails)))
-                .andExpect(status().isOk());
+        mvc.perform(get("/auth/info").with(user(principalDetails)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username",is(user.getName())))
+                .andExpect(jsonPath("$.email",is(user.getEmail())))
+                .andExpect(jsonPath("$.picture",is(user.getPicture())));
 
     }
 
