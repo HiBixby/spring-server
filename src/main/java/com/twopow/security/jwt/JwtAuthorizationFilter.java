@@ -43,7 +43,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         String jwtToken = request.getHeader("Authorization").replace("Bearer ","");
         //서명이 정상적으로 되었다면 username을 들고온다.
-        String username= JWT.require(Algorithm.HMAC512("2powTeam")).build().verify(jwtToken).getClaim("username").asString();
+        String username= JWT.require(Algorithm.HMAC512("이에이승팀의샘플비밀키입니다.")).build().verify(jwtToken).getClaim("username").asString();
 
         if (username!=null){ //서명이 잘 됐으면 username이 null이 아니다.
             User userEntity = userRepository.findByUsername(username);
