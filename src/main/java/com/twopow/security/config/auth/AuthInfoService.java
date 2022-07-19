@@ -18,7 +18,7 @@ public class AuthInfoService {
     @Transactional
     public String 주소저장(HttpServletRequest request, Authentication authentication){
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        System.out.println("프론트에서 받은 주소"+request.getParameter("address"));
+        System.out.println("프론트에서 받은 주소 : "+request.getParameter("address"));
         String address = request.getParameter("address");
         Optional<User> userOptional;
         User user;
