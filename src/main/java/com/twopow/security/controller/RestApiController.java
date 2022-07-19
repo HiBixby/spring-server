@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 @RequiredArgsConstructor
 @RestController
-public class RestLoginController {
+public class RestApiController {
     private final AuthInfoService authInfoService;
 
     @GetMapping("/hello")
@@ -22,7 +24,7 @@ public class RestLoginController {
     }
 
     @GetMapping("/auth/info")
-    public ResponseEntity<?> authRole(HttpServletResponse response, Authentication authentication){
+    public ResponseEntity<?> authRole(HttpServletResponse response, Authentication authentication) {
         JoinedUser joinedUser;
         //HttpHeaders headers = new HttpHeaders();
         if (authentication != null) {
@@ -41,9 +43,7 @@ public class RestLoginController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(HttpServletRequest request, Authentication authentication) {
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        String address = request.getParameter("address");
-        authInfoService.주소저장(principalDetails, address);
-        return ResponseEntity.ok().body(address);
+        String result = authInfoService.주소저장(request, authentication);
+        return ResponseEntity.ok().body(result);
     }
 }
