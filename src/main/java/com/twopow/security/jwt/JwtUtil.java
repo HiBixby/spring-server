@@ -9,14 +9,14 @@ import java.util.Date;
 
 public class JwtUtil {
 
-    private final String subject = "이에이승";
-    String secretKey = "이에이승팀의샘플비밀키입니다.";
+    private static final String subject = "이에이승";
+    static String secretKey = "이에이승팀의샘플비밀키입니다.";
 
-    public Date ConvertDurationToExpiration(int min) {
+    public static Date ConvertDurationToExpiration(int min) {
         return new Date(System.currentTimeMillis() + (6000L) * min);
     }
 
-    public String CreateToken(User user, int durationMinutes) {
+    public static String CreateToken(User user, int durationMinutes) {
         String id= String.valueOf(user.getId());
         String username=user.getUsername();
         Date expirationTime = ConvertDurationToExpiration(durationMinutes);
@@ -29,7 +29,7 @@ public class JwtUtil {
                 .sign(Algorithm.HMAC512(secretKey));
     }
 
-    public String decodeToken(String encodedJwtToken){
+    public static String decodeToken(String encodedJwtToken){
         try{
             return JWT.require(Algorithm.HMAC512(secretKey)).build()
                     .verify(encodedJwtToken)
