@@ -78,10 +78,4 @@ public class RestControllerTest {
                 .andExpect(content().string(hello));
 
     }
-
-    @Test
-    public void afterLoginApi_실행시200코드() throws Exception{
-        PrincipalDetails principalDetails = new PrincipalDetails(user, null);
-        mvc.perform(get("/afterLogin").with(user(principalDetails)).header("Authorization","Bearer "+jwtToken)).andExpect(status().isOk());
-    }
 }
