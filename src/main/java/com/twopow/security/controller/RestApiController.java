@@ -29,21 +29,8 @@ public class RestApiController {
     }
 
     @GetMapping("/auth/info")
-    public ResponseEntity<?> authRole(HttpServletResponse response, Authentication authentication) {
-        JoinedUser joinedUser;
-        //HttpHeaders headers = new HttpHeaders();
-        if (authentication != null) {
-            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-            joinedUser = JoinedUser.builder()
-                    .username(principalDetails.getUser().getName())
-                    .email(principalDetails.getUser().getEmail())
-                    .picture(principalDetails.getUser().getPicture())
-                    .address(principalDetails.getUser().getAddress())
-                    .build();
-            return ResponseEntity.ok().body(joinedUser);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<?> authInfo(Authentication authentication) {
+        return authInfoService.회원정보가져오기(authentication);
     }
 
     @PostMapping("/register")
