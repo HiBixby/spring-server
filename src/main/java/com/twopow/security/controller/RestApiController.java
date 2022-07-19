@@ -45,7 +45,6 @@ public class RestApiController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Register register, Authentication authentication) {
-        String result = authInfoService.주소저장(register, authentication);
-        return ResponseEntity.ok().body(result);
+        return authInfoService.주소저장(register, authentication);
     }
 }
