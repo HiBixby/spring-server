@@ -4,6 +4,7 @@ package com.twopow.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.twopow.security.config.auth.PrincipalDetails;
+import com.twopow.security.jwt.JwtUtil;
 import com.twopow.security.model.User;
 import com.twopow.security.repository.UserRepository;
 import org.junit.Before;
@@ -57,12 +58,7 @@ public class RestControllerTest {
                 .build();
         userRepository.save(user);
 
-        jwtToken = JWT.create()
-                .withSubject("2-pow Token")
-                .withExpiresAt(new Date(System.currentTimeMillis() + (60000) * 30)) //30min
-                .withClaim("id", 1)
-                .withClaim("username", "naver_123456789")
-                .sign(Algorithm.HMAC512("2powTeam"));
+        jwtToken = JwtUtil.CreateToken(user,JwtUtil.Minutes(1));
     }
 
 
