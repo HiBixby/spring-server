@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 
-
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -27,9 +26,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException {
         User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
-        String jwtToken = JwtUtil.CreateToken(user, 30);
-        String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth2/redirect").queryParam("userToken",jwtToken)
-                .build().toUriString();
+        String accessToken = JwtUtil.CreateToken(user, JwtUtil.Minutes(30));
+        String refreshToken = JwtUtil.CreateToken(user, JwtUtil.Days(14));
+        String targetUrl = UriComponentsBuilder
+                .fromUriString("http://localhost:3000/oauth2/redirect")
+                .queryParam("userToken", accessToken)
+                .queryParam("refreshToken", refreshToken)
+                .build()
+                .toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
