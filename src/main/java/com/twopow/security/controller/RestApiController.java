@@ -3,7 +3,9 @@ package com.twopow.security.controller;
 import com.twopow.security.config.auth.AuthInfoService;
 import com.twopow.security.config.auth.PrincipalDetails;
 import com.twopow.security.model.JoinedUser;
+import com.twopow.security.model.Register;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -37,13 +39,13 @@ public class RestApiController {
                     .build();
             return ResponseEntity.ok().body(joinedUser);
         } else {
-            return ResponseEntity.status(401).body(null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(HttpStatus.UNAUTHORIZED);
         }
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(HttpServletRequest request, Authentication authentication) {
-        String result = authInfoService.주소저장(request, authentication);
+    public ResponseEntity<?> register(@RequestBody Register register, Authentication authentication) {
+        String result = authInfoService.주소저장(register, authentication);
         return ResponseEntity.ok().body(result);
     }
 }
