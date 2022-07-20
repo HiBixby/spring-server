@@ -34,8 +34,7 @@ SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsFilter corsFilter;
     private final UserRepository userRepository;
     private final OAuth2SuccessHandler successHandler;
-    @Autowired
-    private PrincipalOauth2UserService principalOauth2UserService;
+    private final PrincipalOauth2UserService principalOauth2UserService;
 
     @Bean
     public BCryptPasswordEncoder encoderPwd() {
