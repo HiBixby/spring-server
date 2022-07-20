@@ -18,16 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 public class RestApiController {
     private final AuthInfoService authInfoService;
 
-    @GetMapping("/hello")
-    public String Hello() {
-        return "hello";
-    }
-
-    @GetMapping("/admin/hello")
-    public String AdminHello() {
-        return "Hello Admin!";
-    }
-
     @GetMapping("/auth/info")
     public ResponseEntity<?> authInfo(Authentication authentication) {
         return authInfoService.회원정보가져오기(authentication);
