@@ -29,7 +29,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             throws IOException {
         User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
         String accessToken = JwtUtil.CreateToken(user, JwtUtil.Minutes(30));
-        String refreshToken = JwtUtil.CreateToken(user, JwtUtil.Days(14));
+        String refreshToken = JwtUtil.CreateToken(null,JwtUtil.Days(14));
         user.setRefreshToken(refreshToken);
         userRepository.save(user);
         String targetUrl = UriComponentsBuilder
