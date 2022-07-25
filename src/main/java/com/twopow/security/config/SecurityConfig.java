@@ -9,7 +9,6 @@ import com.twopow.security.jwt.JwtAuthenticationFilter;
 import com.twopow.security.jwt.JwtAuthorizationFilter;
 import com.twopow.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
@@ -68,6 +66,7 @@ SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .oauth2Login()
                 .loginPage("/") //Tip.코드X 액세스토큰+사용자프로필정보를 한방에 받는다
+                .failureUrl("http://localhost:3000/")
                 .successHandler(successHandler)
                 .userInfoEndpoint()
                 .userService(principalOauth2UserService);
