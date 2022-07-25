@@ -4,14 +4,12 @@ import com.twopow.security.jwt.JwtUtil;
 import com.twopow.security.model.*;
 import com.twopow.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -63,7 +61,8 @@ public class AuthInfoService {
     @Transactional
     public ResponseEntity<?> JWT토큰재발급(JwtTokens jwtTokens, Authentication authentication) {
         User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
-        if (jwtTokens.getRefreshToken().equals(user.getRefreshToken())) {
+        String refreshToken = jwtTokens.getRefreshToken();
+        if (refreshToken.equals(user.getRefreshToken()) && JwtUtil.DecodeToken(refreshToken)!=null) {
             JwtTokens newJwtTokens = JwtTokens.builder()
                     .accessToken(JwtUtil.CreateToken(user, JwtUtil.Minutes(30)))
                     .refreshToken(JwtUtil.CreateToken(null, JwtUtil.Days(14)))
