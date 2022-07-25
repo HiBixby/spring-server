@@ -1,14 +1,10 @@
 package com.twopow.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.nimbusds.oauth2.sdk.token.AccessToken;
 import com.twopow.security.jwt.JwtUtil;
 import com.twopow.security.model.JwtTokens;
 import com.twopow.security.model.Register;
 import com.twopow.security.model.User;
 import com.twopow.security.repository.UserRepository;
-import io.jsonwebtoken.Jwt;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +21,6 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -116,13 +111,14 @@ public class PostApiControllerTest {
         String url = "http://localhost:"+port+"/auth/reissue";
 
         //when
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity(url,request,String.class);
+        ResponseEntity<JwtTokens> responseEntity = restTemplate.postForEntity(url,request,JwtTokens.class);
 
         //then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isGreaterThan("");
+        JwtTokens newJwtTokens = responseEntity.getBody();
 
-//        List<User> all = userRepository.findAll();
-//        assertThat(all.get(0).getAddress()).isEqualTo(address);
+        List<User> all = userRepository.findAll();
+        assertThat(all.get(0).getRefreshToken()).isNotEqualTo(refreshToken);
+        assertThat(all.get(0).getRefreshToken()).isEqualTo(newJwtTokens.getRefreshToken());
     }
 }
