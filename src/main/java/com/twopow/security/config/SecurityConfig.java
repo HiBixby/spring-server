@@ -3,6 +3,7 @@ package com.twopow.security.config;
 //4-1.그 정보를 토대로 자동 회원가입
 //4-2 추가정보 받아서 회원가입
 
+import com.twopow.security.config.oauth.OAuth2FailureHandler;
 import com.twopow.security.config.oauth.OAuth2SuccessHandler;
 import com.twopow.security.config.oauth.PrincipalOauth2UserService;
 import com.twopow.security.jwt.JwtAuthenticationFilter;
@@ -32,6 +33,7 @@ SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsFilter corsFilter;
     private final UserRepository userRepository;
     private final OAuth2SuccessHandler successHandler;
+    private final OAuth2FailureHandler failureHandler;
     private final PrincipalOauth2UserService principalOauth2UserService;
 
     @Bean
@@ -65,8 +67,8 @@ SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().permitAll()
                 .and()
                 .oauth2Login()
-                .loginPage("/") //Tip.코드X 액세스토큰+사용자프로필정보를 한방에 받는다
-                .failureUrl("http://localhost:3000/")
+                .loginPage("/") //Tip.코드X 액세스토큰+사용자프로필정보를 한방에 받는다.
+                .failureHandler(failureHandler)
                 .successHandler(successHandler)
                 .userInfoEndpoint()
                 .userService(principalOauth2UserService);
