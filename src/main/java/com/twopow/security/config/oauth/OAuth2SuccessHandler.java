@@ -1,7 +1,5 @@
 package com.twopow.security.config.oauth;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.twopow.security.config.auth.PrincipalDetails;
 import com.twopow.security.jwt.JwtUtil;
 import com.twopow.security.model.User;
@@ -13,11 +11,9 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,7 +30,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         userRepository.save(user);
         String targetUrl = UriComponentsBuilder
                 .fromUriString("http://localhost:3000/oauth2/redirect")
-                .queryParam("userToken", accessToken)
+                .queryParam("accessToken", accessToken)
                 .queryParam("refreshToken", refreshToken)
                 .build()
                 .toUriString();
