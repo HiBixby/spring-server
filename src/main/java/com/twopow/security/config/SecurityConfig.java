@@ -60,8 +60,7 @@ SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/user/**").authenticated()
-                .antMatchers("/auth/reissue").permitAll()
-                .antMatchers("/auth/**").authenticated()
+                .antMatchers("/auth/info/**").authenticated()
                 .antMatchers("/register/**").authenticated()
                 .antMatchers("/manager/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
                 .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
