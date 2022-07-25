@@ -4,12 +4,14 @@ import com.auth0.jwt.JWT;
 import com.twopow.security.jwt.JwtUtil;
 import com.twopow.security.model.*;
 import com.twopow.security.repository.UserRepository;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.SecretKey;
 import java.sql.Timestamp;
 import java.util.Optional;
 
@@ -62,10 +64,11 @@ public class AuthInfoService {
     @Transactional
     public ResponseEntity<?> JWT토큰재발급(JwtTokens jwtTokens) {
         String expiredAccessToken = jwtTokens.getAccessToken();
-        //추후 signiture 검증 로직 추가 해야함
-        int id = Integer.parseInt(JWT.decode(expiredAccessToken).getId());
-        User user = userRepository.findById(id);
         String refreshToken = jwtTokens.getRefreshToken();
+
+        int id = JwtUtil.getIdFromJWT(expiredAccessToken);
+        User user = userRepository.findById(id);
+
         if (refreshToken.equals(user.getRefreshToken()) && JwtUtil.DecodeToken(refreshToken)!=null) {
             JwtTokens newJwtTokens = JwtTokens.builder()
                     .accessToken(JwtUtil.CreateToken(user, JwtUtil.Minutes(30)))
