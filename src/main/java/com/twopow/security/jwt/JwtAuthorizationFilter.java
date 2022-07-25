@@ -9,6 +9,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.twopow.security.config.auth.PrincipalDetails;
 import com.twopow.security.model.User;
 import com.twopow.security.repository.UserRepository;
+import io.jsonwebtoken.Claims;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,11 +47,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String jwtToken = request.getHeader("Authorization").replace("Bearer ", "");
         //서명이 정상적으로 되었다면 username을 들고온다.
 
-        DecodedJWT decodedJwtToken = JwtUtil.DecodeToken(jwtToken);
+        Claims decodedJwtToken = JwtUtil.DecodeToken(jwtToken);
         // jwt 토큰이 올바르면 decodedUJwtToken을 잘 가져온다
         System.out.println("디코드된 토큰 : "+decodedJwtToken);
         if (decodedJwtToken != null) {
-            String username = decodedJwtToken.getClaim("username").asString();
+            String username = String.valueOf(decodedJwtToken.get("username"));
             User userEntity = userRepository.findByUsername(username);
             PrincipalDetails principalDetails = new PrincipalDetails(userEntity);
 
