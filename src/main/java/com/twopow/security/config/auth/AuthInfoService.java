@@ -1,5 +1,6 @@
 package com.twopow.security.config.auth;
 
+import com.auth0.jwt.JWT;
 import com.twopow.security.jwt.JwtUtil;
 import com.twopow.security.model.*;
 import com.twopow.security.repository.UserRepository;
@@ -59,8 +60,11 @@ public class AuthInfoService {
     }
 
     @Transactional
-    public ResponseEntity<?> JWT토큰재발급(JwtTokens jwtTokens, Authentication authentication) {
-        User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
+    public ResponseEntity<?> JWT토큰재발급(JwtTokens jwtTokens) {
+        String expiredAccessToken = jwtTokens.getAccessToken();
+        //추후 signiture 검증 로직 추가 해야함
+        int id = Integer.parseInt(JWT.decode(expiredAccessToken).getId());
+        User user = userRepository.findById(id);
         String refreshToken = jwtTokens.getRefreshToken();
         if (refreshToken.equals(user.getRefreshToken()) && JwtUtil.DecodeToken(refreshToken)!=null) {
             JwtTokens newJwtTokens = JwtTokens.builder()

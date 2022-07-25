@@ -11,5 +11,6 @@ public interface UserRepository extends JpaRepository<User,Integer> {
     //findby 규칙 ->Username문법
     //select * from user where username=1?
     public User findByUsername(String username);
+    User findById(int id);
     Optional<User> findByProviderAndProviderId(String provider, String providerId);
 }
