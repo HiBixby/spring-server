@@ -4,6 +4,7 @@ package com.twopow.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.twopow.security.config.auth.PrincipalDetails;
+import com.twopow.security.jwt.JwtUtil;
 import com.twopow.security.model.User;
 import com.twopow.security.repository.UserRepository;
 import org.junit.Before;
@@ -57,20 +58,18 @@ public class RestControllerTest {
                 .build();
         userRepository.save(user);
 
-        jwtToken = JWT.create()
-                .withSubject("2-pow Token")
-                .withExpiresAt(new Date(System.currentTimeMillis() + (60000) * 30)) //30min
-                .withClaim("id", 1)
-                .withClaim("username", "naver_123456789")
-                .sign(Algorithm.HMAC512("2powTeam"));
+        jwtToken = JwtUtil.CreateToken(user,JwtUtil.Minutes(1));
     }
 
 
     @Test
-    public void oauth_인증시200코드() throws Exception {
+    public void 회원정보를가져온다() throws Exception {
         PrincipalDetails principalDetails = new PrincipalDetails(user, null);
-        mvc.perform(get("/oauth2/redirect").with(user(principalDetails)))
-                .andExpect(status().isOk());
+        mvc.perform(get("/auth/info").with(user(principalDetails)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username",is(user.getName())))
+                .andExpect(jsonPath("$.email",is(user.getEmail())))
+                .andExpect(jsonPath("$.picture",is(user.getPicture())));
 
     }
 
@@ -81,11 +80,5 @@ public class RestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(hello));
 
-    }
-
-    @Test
-    public void afterLoginApi_실행시200코드() throws Exception{
-        PrincipalDetails principalDetails = new PrincipalDetails(user, null);
-        mvc.perform(get("/afterLogin").with(user(principalDetails)).header("Authorization","Bearer "+jwtToken)).andExpect(status().isOk());
     }
 }

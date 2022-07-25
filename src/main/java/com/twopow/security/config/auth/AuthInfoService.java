@@ -1,12 +1,10 @@
 package com.twopow.security.config.auth;
 
 import com.twopow.security.jwt.JwtUtil;
-import com.twopow.security.model.ErrorMessage;
-import com.twopow.security.model.JwtTokens;
-import com.twopow.security.model.Register;
-import com.twopow.security.model.User;
+import com.twopow.security.model.*;
 import com.twopow.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -20,6 +18,19 @@ import java.util.Optional;
 @Service
 public class AuthInfoService {
     private final UserRepository userRepository;
+
+    @Transactional
+    public ResponseEntity<?> 회원정보가져오기(Authentication authentication) {
+        JoinedUser joinedUser;
+        User user = ((PrincipalDetails)authentication.getPrincipal()).getUser();
+        joinedUser = JoinedUser.builder()
+                .username(user.getName())
+                .email(user.getEmail())
+                .picture(user.getPicture())
+                .address(user.getAddress())
+                .build();
+        return ResponseEntity.ok().body(joinedUser);
+    }
 
     @Transactional
     public ResponseEntity<?> 회원주소저장(Register register, Authentication authentication) {
@@ -61,8 +72,7 @@ public class AuthInfoService {
             userRepository.save(user);
             return ResponseEntity.ok().body(newJwtTokens);
 
-        }
-        else{
+        } else {
             ErrorMessage errorMessage = ErrorMessage.builder()
                     .timestamp(new Timestamp(System.currentTimeMillis()))
                     .status(400)

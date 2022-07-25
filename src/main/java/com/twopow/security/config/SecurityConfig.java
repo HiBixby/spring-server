@@ -34,8 +34,7 @@ SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsFilter corsFilter;
     private final UserRepository userRepository;
     private final OAuth2SuccessHandler successHandler;
-    @Autowired
-    private PrincipalOauth2UserService principalOauth2UserService;
+    private final PrincipalOauth2UserService principalOauth2UserService;
 
     @Bean
     public BCryptPasswordEncoder encoderPwd() {
@@ -67,11 +66,6 @@ SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().permitAll()
                 .and()
-                /*.formLogin()
-                .loginPage("/loginForm")
-                .loginProcessingUrl("/login")// /login 주소 호출이 되면 시큐리티가 낚아채서 대신 진행해줌.
-                .defaultSuccessUrl("/")
-                .and()*/
                 .oauth2Login()
                 .loginPage("/") //Tip.코드X 액세스토큰+사용자프로필정보를 한방에 받는다
                 .successHandler(successHandler)
