@@ -2,10 +2,13 @@ package com.twopow.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.nimbusds.oauth2.sdk.token.AccessToken;
 import com.twopow.security.jwt.JwtUtil;
+import com.twopow.security.model.JwtTokens;
 import com.twopow.security.model.Register;
 import com.twopow.security.model.User;
 import com.twopow.security.repository.UserRepository;
+import io.jsonwebtoken.Jwt;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,10 +40,13 @@ public class PostApiControllerTest {
     private UserRepository userRepository;
 
     private User user;
-    private String jwtToken;
+    private String expiredAccessToken;
+    private String accessToken;
+    private String refreshToken;
 
     @Before
     public void setup() {
+        refreshToken = JwtUtil.CreateToken(null,JwtUtil.Days(1));
         user = User.builder()
                 .name("홍길동")
                 .username("naver_123456789")
@@ -49,10 +55,12 @@ public class PostApiControllerTest {
                 .provider("naver")
                 .providerId("123456789")
                 .picture("https://ssl.pstatic.net/static/newsstand/up/2013/0813/nsd114029379.gif")
+                .refreshToken(refreshToken)
                 .build();
         userRepository.save(user);
 
-        jwtToken = JwtUtil.CreateToken(user,JwtUtil.Minutes(1));
+        expiredAccessToken = JwtUtil.CreateToken(user,JwtUtil.Minutes(-1));
+        accessToken = JwtUtil.CreateToken(user,JwtUtil.Minutes(1));
     }
 
     @After
@@ -69,7 +77,7 @@ public class PostApiControllerTest {
 
         // create headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(jwtToken);
+        headers.setBearerAuth(accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
@@ -87,5 +95,34 @@ public class PostApiControllerTest {
 
         List<User> all = userRepository.findAll();
         assertThat(all.get(0).getAddress()).isEqualTo(address);
+    }
+
+    @Test
+    public void 리이슈된다() throws Exception {
+
+        //given
+
+        System.out.println("expiredToken: "+expiredAccessToken);
+        JwtTokens jwtTokens = JwtTokens.builder().accessToken(expiredAccessToken).refreshToken(refreshToken).build();
+
+        // create headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        // build the request
+        HttpEntity<JwtTokens> request = new HttpEntity<>(jwtTokens,headers);
+
+        String url = "http://localhost:"+port+"/auth/reissue";
+
+        //when
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(url,request,String.class);
+
+        //then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).isGreaterThan("");
+
+//        List<User> all = userRepository.findAll();
+//        assertThat(all.get(0).getAddress()).isEqualTo(address);
     }
 }
