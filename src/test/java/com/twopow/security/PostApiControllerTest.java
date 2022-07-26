@@ -120,5 +120,8 @@ public class PostApiControllerTest {
         List<User> all = userRepository.findAll();
         assertThat(all.get(0).getRefreshToken()).isNotEqualTo(refreshToken);
         assertThat(all.get(0).getRefreshToken()).isEqualTo(newJwtTokens.getRefreshToken());
+
+        //response로 받은 accessToken이 기존 accessToken과 다른지 검사
+        assertThat(accessToken).isNotEqualTo(newJwtTokens.getAccessToken());
     }
 }
