@@ -32,12 +32,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         //1.username,password 받아서
         try {
-//            BufferedReader br=request.getReader();
-//            String input=null;
-//            while((input=br.readLine())!=null){
-//                System.out.println(input);
-//            }
-//            System.out.println(request.getInputStream().toString());
+
             ObjectMapper om=new ObjectMapper();//json데이터 파싱해줌
             User user = om.readValue(request.getInputStream(), User.class);
             System.out.println(user);
