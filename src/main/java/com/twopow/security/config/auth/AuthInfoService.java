@@ -6,6 +6,7 @@ import com.twopow.security.model.*;
 import com.twopow.security.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class AuthInfoService {
     private final UserRepository userRepository;
 
@@ -87,6 +89,19 @@ public class AuthInfoService {
                     .path("/auth/reissue")
                     .build();
             return ResponseEntity.badRequest().body(errorMessage);
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<?> 만료되지않은토큰인지검증한다(VerifyJwt verifyJwt){
+        String jwtToken = verifyJwt.getJwtToken();
+        if(!JwtUtil.isExpiredJwt(jwtToken)){
+            VerifyJwt result = VerifyJwt.builder().jwtToken(jwtToken).expired(false).build();
+            return ResponseEntity.ok().body(result);
+        }
+        else{
+            VerifyJwt result = VerifyJwt.builder().jwtToken(jwtToken).expired(true).build();
+            return ResponseEntity.status(401).body(result);
         }
     }
 }
