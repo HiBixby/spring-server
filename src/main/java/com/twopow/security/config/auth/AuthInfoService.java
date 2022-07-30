@@ -1,6 +1,7 @@
 package com.twopow.security.config.auth;
 
 import com.auth0.jwt.JWT;
+import com.nimbusds.oauth2.sdk.token.AccessToken;
 import com.twopow.security.jwt.JwtUtil;
 import com.twopow.security.model.*;
 import com.twopow.security.repository.UserRepository;
@@ -26,7 +27,7 @@ public class AuthInfoService {
     @Transactional
     public ResponseEntity<?> 회원정보가져오기(Authentication authentication) {
         JoinedUser joinedUser;
-        User user = ((PrincipalDetails)authentication.getPrincipal()).getUser();
+        User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
         joinedUser = JoinedUser.builder()
                 .username(user.getName())
                 .email(user.getEmail())
@@ -40,7 +41,7 @@ public class AuthInfoService {
     public ResponseEntity<?> 회원주소저장(Register register, Authentication authentication) {
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         String address = register.getAddress();
-        System.out.println("프론트에서 받은 주소 : " + address);
+        log.trace("[Register] 프론트에서 받은 주소 : {}",address);
         Optional<User> userOptional;
         User user;
         userOptional = userRepository.findByProviderAndProviderId(principalDetails.getUser().getProvider(), principalDetails.getUser().getProviderId());
@@ -66,31 +67,44 @@ public class AuthInfoService {
 
     @Transactional
     public ResponseEntity<?> JWT토큰재발급(JwtTokens jwtTokens) {
-        String expiredAccessToken = jwtTokens.getAccessToken();
-        String refreshToken = jwtTokens.getRefreshToken();
+        String oldAccessToken = jwtTokens.getAccessToken();
+        String oldRefreshToken = jwtTokens.getRefreshToken();
 
-        int id = JwtUtil.getIdFromJWT(expiredAccessToken);
+        log.trace("[Reissue] Front-end 에서 Back-end 로 보낸 Access Token : {}", oldAccessToken);
+        log.trace("[Reissue] Front-end 에서 Back-end 로 보낸 Refresh Token : {}",oldRefreshToken);
+
+        int id = JwtUtil.getIdFromJWT(oldAccessToken);
         User user = userRepository.findById(id);
 
-        if (refreshToken.equals(user.getRefreshToken()) && JwtUtil.DecodeToken(refreshToken)!=null) {
+        if (oldRefreshToken.equals(user.getRefreshToken()) && JwtUtil.DecodeToken(oldRefreshToken) != null) {
             String newAccessToken = JwtUtil.CreateToken(user, JwtUtil.Minutes(30));
-            String newRefreshToken = JwtUtil.CreateToken(null,JwtUtil.Days(14));
+            String newRefreshToken = JwtUtil.CreateToken(null, JwtUtil.Days(14));
             JwtTokens newJwtTokens = JwtTokens.builder()
                     .accessToken(newAccessToken)
                     .refreshToken(newRefreshToken)
                     .build();
             user.setRefreshToken(newRefreshToken);
             userRepository.save(user);
-            ResponseCookie cookie = ResponseCookie.from("refreshToken",newRefreshToken)
+
+            log.trace("[Reissue] Back-end 에서 재발급한 Access Token : {}", newAccessToken);
+            log.trace("[Reissue] Back-end 에서 재발급한 Refresh Token : {}", newRefreshToken);
+
+            ResponseCookie cookie = ResponseCookie.from("refreshToken", newRefreshToken)
                     .maxAge(14 * 24 * 60 * 60)
                     .path("/")
                     .secure(true)
                     .sameSite("None")
                     .httpOnly(true)
                     .build();
-            return ResponseEntity.ok().header("Set-Cookie",cookie.toString()).body(newJwtTokens);
+
+            log.trace("[Reissue] Refresh Token을 담은 Cookie : {}",cookie);
+
+            return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).body(newJwtTokens);
 
         } else {
+
+            log.error("[Reissue] Front-End에서 받은 Refresh Token이 DB에 저장된 Refresh Token과 일치하지 않음");
+
             ErrorMessage errorMessage = ErrorMessage.builder()
                     .timestamp(new Timestamp(System.currentTimeMillis()))
                     .status(400)
@@ -103,13 +117,12 @@ public class AuthInfoService {
     }
 
     @Transactional
-    public ResponseEntity<?> 만료되지않은토큰인지검증한다(VerifyJwt verifyJwt){
+    public ResponseEntity<?> 만료되지않은토큰인지검증한다(VerifyJwt verifyJwt) {
         String jwtToken = verifyJwt.getJwtToken();
-        if(!JwtUtil.isExpiredJwt(jwtToken)){
+        if (!JwtUtil.isExpiredJwt(jwtToken)) {
             VerifyJwt result = VerifyJwt.builder().jwtToken(jwtToken).expired(false).build();
             return ResponseEntity.ok().body(result);
-        }
-        else{
+        } else {
             VerifyJwt result = VerifyJwt.builder().jwtToken(jwtToken).expired(true).build();
             return ResponseEntity.status(401).body(result);
         }
