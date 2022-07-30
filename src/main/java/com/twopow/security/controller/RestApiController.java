@@ -3,7 +3,9 @@ package com.twopow.security.controller;
 import com.twopow.security.config.auth.AuthInfoService;
 import com.twopow.security.model.JwtTokens;
 import com.twopow.security.model.Register;
+import com.twopow.security.model.VerifyJwt;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,5 +31,10 @@ public class RestApiController {
     @PostMapping("/auth/reissue")
     public ResponseEntity<?> reissue(@RequestBody JwtTokens jwtTokens) {
         return authInfoService.JWT토큰재발급(jwtTokens);
+    }
+
+    @PostMapping("/auth/expired")
+    public ResponseEntity<?> isExpired(@RequestBody VerifyJwt jwtTokens){
+        return authInfoService.만료되지않은토큰인지검증한다(jwtTokens);
     }
 }
