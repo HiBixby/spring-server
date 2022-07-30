@@ -68,4 +68,14 @@ public class JwtUtil {
         }
         return 0;
     }
+
+    public static boolean isExpiredJwt(String jwtToken){
+        try{
+            Jwts.parser().setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8)).parseClaimsJws(jwtToken).getBody();
+            return false;
+        }
+        catch (ExpiredJwtException e){
+            return true;
+        }
+    }
 }
