@@ -10,6 +10,7 @@ import com.twopow.security.config.auth.PrincipalDetails;
 import com.twopow.security.model.User;
 import com.twopow.security.repository.UserRepository;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,7 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+@Slf4j
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final UserRepository userRepository;
@@ -37,7 +38,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         System.out.println("인증이나 권한이 필요한 주소 요청이 됨.");
 
         String jwtHeader = request.getHeader("Authorization");
-        System.out.println("jwtHeader: " + jwtHeader);
+        log.info("jwtHeader: " + jwtHeader);
         //jwt토큰을 검증을해서 정상적인 사용자인지 확인
         if (jwtHeader == null || !jwtHeader.startsWith("Bearer")) {
             chain.doFilter(request, response);
