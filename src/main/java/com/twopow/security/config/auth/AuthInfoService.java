@@ -7,6 +7,7 @@ import com.twopow.security.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -72,13 +73,22 @@ public class AuthInfoService {
         User user = userRepository.findById(id);
 
         if (refreshToken.equals(user.getRefreshToken()) && JwtUtil.DecodeToken(refreshToken)!=null) {
+            String newAccessToken = JwtUtil.CreateToken(user, JwtUtil.Minutes(30));
+            String newRefreshToken = JwtUtil.CreateToken(null,JwtUtil.Days(14));
             JwtTokens newJwtTokens = JwtTokens.builder()
-                    .accessToken(JwtUtil.CreateToken(user, JwtUtil.Minutes(30)))
-                    .refreshToken(JwtUtil.CreateToken(null, JwtUtil.Days(14)))
+                    .accessToken(newAccessToken)
+                    .refreshToken(newRefreshToken)
                     .build();
-            user.setRefreshToken(newJwtTokens.getRefreshToken());
+            user.setRefreshToken(newRefreshToken);
             userRepository.save(user);
-            return ResponseEntity.ok().body(newJwtTokens);
+            ResponseCookie cookie = ResponseCookie.from("refreshToken",newRefreshToken)
+                    .maxAge(14 * 24 * 60 * 60)
+                    .path("/")
+                    .secure(true)
+                    .sameSite("None")
+                    .httpOnly(true)
+                    .build();
+            return ResponseEntity.ok().header("Set-Cookie",cookie.toString()).body(newJwtTokens);
 
         } else {
             ErrorMessage errorMessage = ErrorMessage.builder()
