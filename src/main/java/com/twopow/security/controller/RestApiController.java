@@ -33,8 +33,8 @@ public class RestApiController {
         return authInfoService.JWT토큰재발급(jwtTokens);
     }
 
-    @PostMapping("/auth/expired")
-    public ResponseEntity<?> isExpired(@RequestBody VerifyJwt jwtTokens){
+    @PostMapping("/auth/validity")
+    public ResponseEntity<?> CheckTokenExpired(@RequestBody VerifyJwt jwtTokens){
         return authInfoService.만료되지않은토큰인지검증한다(jwtTokens);
     }
 }
