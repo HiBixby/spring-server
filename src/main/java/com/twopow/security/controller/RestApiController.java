@@ -5,7 +5,6 @@ import com.twopow.security.model.JwtTokens;
 import com.twopow.security.model.Register;
 import com.twopow.security.model.VerifyJwt;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +33,12 @@ public class RestApiController {
     }
 
     @PostMapping("/auth/validity")
-    public ResponseEntity<?> CheckTokenExpired(@RequestBody VerifyJwt jwtTokens){
+    public ResponseEntity<?> CheckTokenExpired(@RequestBody VerifyJwt jwtTokens) {
         return authInfoService.만료되지않은토큰인지검증한다(jwtTokens);
+    }
+
+    @PostMapping("/auth/refresh-token")
+    public ResponseEntity<?> SendRefreshToken(@RequestBody JwtTokens jwtTokens) {
+        return authInfoService.리프래시토큰을발급해준다(jwtTokens);
     }
 }
