@@ -136,7 +136,7 @@ public class AuthInfoService {
     public ResponseEntity<?> 리프래시토큰을발급해준다(Authentication authentication){
         User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
         if(user != null && Objects.equals(user.getRefreshToken(), "false")){
-            String refreshToken = JwtUtil.CreateToken(user,JwtUtil.Days(14));
+            String refreshToken = JwtUtil.CreateToken(null,JwtUtil.Days(14));
             log.trace("발급된 refresh token : {}",refreshToken);
             user.setRefreshToken(refreshToken);
             userRepository.save(user);
