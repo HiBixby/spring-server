@@ -1,11 +1,8 @@
 package com.twopow.security.config.auth;
 
-import com.auth0.jwt.JWT;
-import com.nimbusds.oauth2.sdk.token.AccessToken;
 import com.twopow.security.jwt.JwtUtil;
 import com.twopow.security.model.*;
 import com.twopow.security.repository.UserRepository;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
@@ -14,8 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.SecretKey;
 import java.sql.Timestamp;
+import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -125,6 +122,38 @@ public class AuthInfoService {
         } else {
             VerifyJwt result = VerifyJwt.builder().jwtToken(jwtToken).expired(true).build();
             return ResponseEntity.status(401).body(result);
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<?> 리프래시토큰을발급해준다(JwtTokens jwtTokens){
+        String accessToken = jwtTokens.getAccessToken();
+        int id = JwtUtil.getIdFromJWT(accessToken);
+        User user = userRepository.findById(id);
+        if(!JwtUtil.isExpiredJwt(accessToken) && Objects.equals(user.getRefreshToken(), "false")){
+            String refreshToken = JwtUtil.CreateToken(user,JwtUtil.Days(14));
+            user.setRefreshToken(refreshToken);
+            userRepository.save(user);
+
+            ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                    .maxAge(14 * 24 * 60 * 60)
+                    .path("/")
+                    .secure(true)
+                    .sameSite("None")
+                    .httpOnly(true)
+                    .build();
+
+            return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).body("");
+        }
+        else{
+            ErrorMessage errorMessage = ErrorMessage.builder()
+                    .timestamp(new Timestamp(System.currentTimeMillis()))
+                    .status(401)
+                    .error("UNAUTHORIZED")
+                    .message("Invalid access token")
+                    .path("/")
+                    .build();
+            return ResponseEntity.status(401).body(errorMessage);
         }
     }
 }
