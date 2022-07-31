@@ -37,8 +37,8 @@ public class RestApiController {
         return authInfoService.만료되지않은토큰인지검증한다(jwtTokens);
     }
 
-    @PostMapping("/auth/refresh-token")
-    public ResponseEntity<?> SendRefreshToken(@RequestBody JwtTokens jwtTokens) {
-        return authInfoService.리프래시토큰을발급해준다(jwtTokens);
+    @GetMapping("/auth/refresh-token")
+    public ResponseEntity<?> SendRefreshToken(Authentication authentication) {
+        return authInfoService.리프래시토큰을발급해준다(authentication);
     }
 }

@@ -126,11 +126,10 @@ public class AuthInfoService {
     }
 
     @Transactional
-    public ResponseEntity<?> 리프래시토큰을발급해준다(JwtTokens jwtTokens){
-        String accessToken = jwtTokens.getAccessToken();
-        int id = JwtUtil.getIdFromJWT(accessToken);
-        User user = userRepository.findById(id);
-        if(!JwtUtil.isExpiredJwt(accessToken) && Objects.equals(user.getRefreshToken(), "false")){
+    public ResponseEntity<?> 리프래시토큰을발급해준다(Authentication authentication){
+        User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
+
+        if(user != null && Objects.equals(user.getRefreshToken(), "false")){
             String refreshToken = JwtUtil.CreateToken(user,JwtUtil.Days(14));
             user.setRefreshToken(refreshToken);
             userRepository.save(user);
@@ -150,7 +149,7 @@ public class AuthInfoService {
                     .timestamp(new Timestamp(System.currentTimeMillis()))
                     .status(401)
                     .error("UNAUTHORIZED")
-                    .message("Invalid access token")
+                    .message("")
                     .path("/")
                     .build();
             return ResponseEntity.status(401).body(errorMessage);
