@@ -25,13 +25,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             throws IOException {
         User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
         String accessToken = JwtUtil.CreateToken(user, JwtUtil.Minutes(30));
-//        String refreshToken = JwtUtil.CreateToken(null,JwtUtil.Days(14));
+        String refreshToken = JwtUtil.CreateToken(null,JwtUtil.Days(14));
         user.setRefreshToken("false");
         userRepository.save(user);
         String targetUrl = UriComponentsBuilder
                 .fromUriString("http://localhost:3000/oauth2/redirect")
                 .queryParam("accessToken", accessToken)
-//                .queryParam("refreshToken", refreshToken)
+                .queryParam("refreshToken", refreshToken)
                 .build()
                 .toUriString();
 

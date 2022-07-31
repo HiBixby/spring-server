@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -32,18 +30,12 @@ public class RestApiController {
     }
 
     @PostMapping("/auth/reissue")
-    public ResponseEntity<?> reissue(HttpServletRequest request, JwtTokens jwtTokens) {
-        return authInfoService.JWT토큰재발급(request.getCookies(),jwtTokens);
+    public ResponseEntity<?> reissue(JwtTokens jwtTokens) {
+        return authInfoService.JWT토큰재발급(jwtTokens);
     }
 
     @PostMapping("/auth/validity")
     public ResponseEntity<?> CheckTokenExpired(@RequestBody VerifyJwt jwtTokens) {
         return authInfoService.만료되지않은토큰인지검증한다(jwtTokens);
-    }
-
-    @GetMapping("/auth/refresh-token")
-    public ResponseEntity<?> SendRefreshToken(Authentication authentication) {
-        log.info("send refresh token API 요청이 들어왔다.");
-        return authInfoService.리프래시토큰을발급해준다(authentication);
     }
 }
