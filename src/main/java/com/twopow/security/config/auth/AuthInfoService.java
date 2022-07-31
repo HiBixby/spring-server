@@ -128,9 +128,9 @@ public class AuthInfoService {
     @Transactional
     public ResponseEntity<?> 리프래시토큰을발급해준다(Authentication authentication){
         User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
-
         if(user != null && Objects.equals(user.getRefreshToken(), "false")){
             String refreshToken = JwtUtil.CreateToken(user,JwtUtil.Days(14));
+            log.trace("발급된 refresh token : {}",refreshToken);
             user.setRefreshToken(refreshToken);
             userRepository.save(user);
 
@@ -141,10 +141,11 @@ public class AuthInfoService {
                     .sameSite("None")
                     .httpOnly(true)
                     .build();
-
+            log.trace("만들어진 쿠키 : {}",cookie);
             return ResponseEntity.ok().header("Set-Cookie", cookie.toString()).body("");
         }
         else{
+            log.error("에러 발생");
             ErrorMessage errorMessage = ErrorMessage.builder()
                     .timestamp(new Timestamp(System.currentTimeMillis()))
                     .status(401)
