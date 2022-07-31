@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
 import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.Optional;
@@ -63,9 +64,15 @@ public class AuthInfoService {
     }
 
     @Transactional
-    public ResponseEntity<?> JWT토큰재발급(JwtTokens jwtTokens) {
-        String oldAccessToken = jwtTokens.getAccessToken();
-        String oldRefreshToken = jwtTokens.getRefreshToken();
+    public ResponseEntity<?> JWT토큰재발급(Cookie[] cookies, JwtTokens jwtTokens) {
+        String oldAccessToken;
+        String oldRefreshToken = null;
+
+        if (Objects.equals(cookies[0].getName(), "refreshToken")){
+            oldRefreshToken = cookies[0].getValue();
+        }
+
+        oldAccessToken = jwtTokens.getAccessToken();
 
         log.trace("[Reissue] Front-end 에서 Back-end 로 보낸 Access Token : {}", oldAccessToken);
         log.trace("[Reissue] Front-end 에서 Back-end 로 보낸 Refresh Token : {}",oldRefreshToken);
@@ -73,7 +80,7 @@ public class AuthInfoService {
         int id = JwtUtil.getIdFromJWT(oldAccessToken);
         User user = userRepository.findById(id);
 
-        if (oldRefreshToken.equals(user.getRefreshToken()) && JwtUtil.DecodeToken(oldRefreshToken) != null) {
+        if (Objects.requireNonNull(oldRefreshToken).equals(user.getRefreshToken()) && JwtUtil.DecodeToken(oldRefreshToken) != null) {
             String newAccessToken = JwtUtil.CreateToken(user, JwtUtil.Minutes(30));
             String newRefreshToken = JwtUtil.CreateToken(null, JwtUtil.Days(14));
             JwtTokens newJwtTokens = JwtTokens.builder()
