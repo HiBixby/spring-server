@@ -22,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
 @Slf4j
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -50,7 +51,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         Claims decodedJwtToken = JwtUtil.DecodeToken(jwtToken);
         // jwt 토큰이 올바르면 decodedUJwtToken을 잘 가져온다
-        log.info("[JwtAuthorizationFilter] 디코드된 토큰 : "+decodedJwtToken);
+        log.info("[JwtAuthorizationFilter] 디코드된 토큰 : " + decodedJwtToken);
         if (decodedJwtToken != null) {
             String username = String.valueOf(decodedJwtToken.get("username"));
             User userEntity = userRepository.findByUsername(username);

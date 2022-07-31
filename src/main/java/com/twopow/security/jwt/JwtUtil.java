@@ -31,7 +31,7 @@ public class JwtUtil {
             createdToken = Jwts.builder()
                     .setSubject(subject)
                     .setId(id)
-                    .claim("username",username)
+                    .claim("username", username)
                     .setExpiration(expiresAt)
                     .signWith(SignatureAlgorithm.HS256, secretKey.getBytes(StandardCharsets.UTF_8))
                     .compact();
@@ -39,7 +39,7 @@ public class JwtUtil {
             System.out.println("JWT access token : " + createdToken);
         } else {
             createdToken = Jwts.builder()
-                            .setSubject(subject).setExpiration(expiresAt).signWith(SignatureAlgorithm.HS256,secretKey.getBytes(StandardCharsets.UTF_8)).compact();
+                    .setSubject(subject).setExpiration(expiresAt).signWith(SignatureAlgorithm.HS256, secretKey.getBytes(StandardCharsets.UTF_8)).compact();
             System.out.println("JWT refresh token : " + createdToken);
         }
 
@@ -61,7 +61,7 @@ public class JwtUtil {
             return id;
         } catch (ExpiredJwtException e) {
             String id = e.getClaims().getId();
-            System.out.println("stringId: "+id);
+            System.out.println("stringId: " + id);
             return Integer.parseInt(id);
         } catch (Exception ignored) {
 
@@ -69,12 +69,11 @@ public class JwtUtil {
         return 0;
     }
 
-    public static boolean isExpiredJwt(String jwtToken){
-        try{
+    public static boolean isExpiredJwt(String jwtToken) {
+        try {
             Jwts.parser().setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8)).parseClaimsJws(jwtToken).getBody();
             return false;
-        }
-        catch (ExpiredJwtException e){
+        } catch (ExpiredJwtException e) {
             return true;
         }
     }

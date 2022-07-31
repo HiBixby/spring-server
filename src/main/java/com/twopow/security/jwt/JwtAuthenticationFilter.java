@@ -25,26 +25,27 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
+
     // /login 요청시 로그인 시도를 위해서 실행되는 함수
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         System.out.println("JwtAuthenticationFilter: 로그인 시도중");
 
         //1.username,password 받아서
         try {
 
-            ObjectMapper om=new ObjectMapper();//json데이터 파싱해줌
+            ObjectMapper om = new ObjectMapper();//json데이터 파싱해줌
             User user = om.readValue(request.getInputStream(), User.class);
             System.out.println(user);
 
-            UsernamePasswordAuthenticationToken authenticationToken=
-                    new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword());
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
             // PrincipalDetailsService의 loadUserByUsername()함수가 실행됨.
             //authentication에는 내가 로그인한 정보가 담긴다.
-            Authentication authentication=
+            Authentication authentication =
                     authenticationManager.authenticate(authenticationToken);
             //=> 로그인이 되었다는 뜻.
-            PrincipalDetails principalDetails=(PrincipalDetails) authentication.getPrincipal();
+            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
             System.out.println(principalDetails.getUser().getUsername());
             //authentication 객체가 session영역에 저장됨
             //리턴해주는 이유는 권한 관리를 security가 대신 해주기 떄문에 편하려고 하는 거임.
@@ -52,7 +53,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             return authentication;
 
 
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;

@@ -40,7 +40,7 @@ public class RestApiController {
     }
 
     @GetMapping("/auth/refresh-token")
-    public ResponseEntity<?> SendRefreshToken(Authentication authentication){
+    public ResponseEntity<?> SendRefreshToken(Authentication authentication) {
         return authInfoService.리프래시토큰을발급해준다(authentication);
     }
 }
