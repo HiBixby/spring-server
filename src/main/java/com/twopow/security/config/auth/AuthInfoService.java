@@ -114,4 +114,26 @@ public class AuthInfoService {
             return ResponseEntity.status(401).body(result);
         }
     }
+    @Transactional
+    public ResponseEntity<?> 리프래시토큰을발급해준다(Authentication authentication) {
+        User user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
+        if (user != null && Objects.equals(user.getRefreshToken(), "false")) {
+            String refreshToken = JwtUtil.CreateToken(null, JwtUtil.Days(14));
+            log.trace("발급된 refresh token : {}", refreshToken);
+            user.setRefreshToken(refreshToken);
+            userRepository.save(user);
+            JwtTokens jwtTokens = JwtTokens.builder().refreshToken(refreshToken).build();
+            return ResponseEntity.ok().body(jwtTokens);
+        } else {
+            log.error("에러 발생");
+            ErrorMessage errorMessage = ErrorMessage.builder()
+                    .timestamp(new Timestamp(System.currentTimeMillis()))
+                    .status(401)
+                    .error("UNAUTHORIZED")
+                    .message("")
+                    .path("/")
+                    .build();
+            return ResponseEntity.status(401).body(errorMessage);
+        }
+    }
 }
