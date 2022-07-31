@@ -64,7 +64,6 @@ SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/register/**").authenticated()
                 .antMatchers("/manager/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
                 .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
-                .antMatchers("/auth/refresh-token/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .oauth2Login()
