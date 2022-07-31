@@ -96,7 +96,7 @@ public class AuthInfoService {
             ResponseCookie cookie = ResponseCookie.from("refreshToken", newRefreshToken)
                     .maxAge(14 * 24 * 60 * 60)
                     .path("/")
-                    .secure(true)
+                    .secure(false)
                     .sameSite("None")
                     .httpOnly(true)
                     .build();
@@ -144,7 +144,7 @@ public class AuthInfoService {
             ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                     .maxAge(14 * 24 * 60 * 60)
                     .path("/")
-                    .secure(true)
+                    .secure(false)
                     .sameSite("None")
                     .httpOnly(true)
                     .build();
