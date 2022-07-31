@@ -7,6 +7,7 @@ import com.twopow.security.config.oauth.provider.NaverUserInfo;
 import com.twopow.security.config.oauth.provider.OAuth2UserInfo;
 import com.twopow.security.model.User;
 import com.twopow.security.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -18,10 +19,10 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     //구글로부터 받은 userRequest 데이터에 대한 후처리되는 함수
     //함수 종료시 @AuthenticationPrincipal 어노테이션이 만들어진다.
@@ -33,23 +34,20 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         //구글 로그인 버튼 클릭->구글 로그인창->로그인을 완료->code를 리턴(Oauth-client 라이브러리)->AccessToken 요청
         //userRequest정보->loadUser함수 호출->구글로부터 회원 프로필 받아준다.
         //System.out.println("userRequest:"+super.loadUser(userRequest).getAttributes());
-        OAuth2User oAuth2User=super.loadUser(userRequest);
-        System.out.println("getAttributes:"+oAuth2User.getAttributes());
+        OAuth2User oAuth2User = super.loadUser(userRequest);
+        System.out.println("getAttributes:" + oAuth2User.getAttributes());
 
-        OAuth2UserInfo oAuth2UserInfo=null;
-        if(userRequest.getClientRegistration().getRegistrationId().equals("google")){
+        OAuth2UserInfo oAuth2UserInfo = null;
+        if (userRequest.getClientRegistration().getRegistrationId().equals("google")) {
             System.out.println("구글 로그인 요청");
-            oAuth2UserInfo=new GoogleUserInfo(oAuth2User.getAttributes());
-        }
-        else if(userRequest.getClientRegistration().getRegistrationId().equals("facebook")){
+            oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
+        } else if (userRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
             System.out.println("페이스북 로그인 요청");
-            oAuth2UserInfo=new FacebookUserInfo(oAuth2User.getAttributes());
-        }
-        else if(userRequest.getClientRegistration().getRegistrationId().equals("naver")){
+            oAuth2UserInfo = new FacebookUserInfo(oAuth2User.getAttributes());
+        } else if (userRequest.getClientRegistration().getRegistrationId().equals("naver")) {
             System.out.println("네이버 로그인 요청");
-            oAuth2UserInfo=new NaverUserInfo((Map)oAuth2User.getAttributes().get("response"));
-        }
-        else{
+            oAuth2UserInfo = new NaverUserInfo((Map) oAuth2User.getAttributes().get("response"));
+        } else {
             System.out.println("지원하지 않는 플랫폼 입니다.");
         }
 
