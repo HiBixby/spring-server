@@ -1,7 +1,6 @@
 package com.twopow.security.config.oauth;
 
 import com.twopow.security.config.auth.PrincipalDetails;
-import com.twopow.security.config.oauth.provider.FacebookUserInfo;
 import com.twopow.security.config.oauth.provider.GoogleUserInfo;
 import com.twopow.security.config.oauth.provider.NaverUserInfo;
 import com.twopow.security.config.oauth.provider.OAuth2UserInfo;
@@ -9,8 +8,6 @@ import com.twopow.security.model.User;
 import com.twopow.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
