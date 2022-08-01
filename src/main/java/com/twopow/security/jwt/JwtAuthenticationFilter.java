@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             log.trace("{}", user);
 
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), null);
             // PrincipalDetailsService의 loadUserByUsername()함수가 실행됨.
             //authentication에는 내가 로그인한 정보가 담긴다.
             Authentication authentication =
