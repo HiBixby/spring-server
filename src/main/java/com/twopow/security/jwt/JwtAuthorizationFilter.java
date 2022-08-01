@@ -36,10 +36,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     //인증이나 권한이 필요한 주소요청이 있을 때 해당 필터를 타게됨
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        log.info("[JwtAuthorizationFilter] 인증이나 권한이 필요한 주소 요청이 됨.");
+        log.trace("인증이나 권한이 필요한 주소 요청이 됨.");
 
         String jwtHeader = request.getHeader("Authorization");
-        log.info("[JwtAuthorizationFilter] jwtHeader: " + jwtHeader);
+        log.trace("Authorization Header : {}",jwtHeader);
         //jwt토큰을 검증을해서 정상적인 사용자인지 확인
         if (jwtHeader == null || !jwtHeader.startsWith("Bearer")) {
             chain.doFilter(request, response);
@@ -51,7 +51,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         Claims decodedJwtToken = JwtUtil.DecodeToken(jwtToken);
         // jwt 토큰이 올바르면 decodedUJwtToken을 잘 가져온다
-        log.info("[JwtAuthorizationFilter] 디코드된 토큰 : " + decodedJwtToken);
+        log.trace("디코드된 토큰 : {}",decodedJwtToken);
         if (decodedJwtToken != null) {
             String username = String.valueOf(decodedJwtToken.get("username"));
             User userEntity = userRepository.findByUsername(username);

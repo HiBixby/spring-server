@@ -5,10 +5,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-
+@Slf4j
 public class JwtUtil {
 
     private static final String subject = "이에이승";
@@ -36,11 +37,11 @@ public class JwtUtil {
                     .signWith(SignatureAlgorithm.HS256, secretKey.getBytes(StandardCharsets.UTF_8))
                     .compact();
 
-            System.out.println("JWT access token : " + createdToken);
+            log.trace("JWT access token : {}",createdToken);
         } else {
             createdToken = Jwts.builder()
                     .setSubject(subject).setExpiration(expiresAt).signWith(SignatureAlgorithm.HS256, secretKey.getBytes(StandardCharsets.UTF_8)).compact();
-            System.out.println("JWT refresh token : " + createdToken);
+            log.trace("JWT refresh token : {}",createdToken);
         }
 
         return createdToken;
@@ -61,7 +62,7 @@ public class JwtUtil {
             return id;
         } catch (ExpiredJwtException e) {
             String id = e.getClaims().getId();
-            System.out.println("stringId: " + id);
+            log.trace("stringId: {}", id);
             return Integer.parseInt(id);
         } catch (Exception ignored) {
 
