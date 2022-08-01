@@ -21,7 +21,12 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.error("[Authentication Failure] 오류가 생겨 back-end 에서 프론트의 메인 페이지로 redirect 합니다.");
         String targetUrl = UriComponentsBuilder
-                .fromUriString("http://localhost:3000/")
+                .newInstance()
+                .scheme("http")
+                .host("localhost")
+                .port(3000)
+                .path("/")
+                .encode()
                 .build()
                 .toUriString();
         getRedirectStrategy().sendRedirect(request, response, targetUrl);

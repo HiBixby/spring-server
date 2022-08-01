@@ -30,9 +30,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         user.setRefreshToken("false");
         userRepository.save(user);
         String targetUrl = UriComponentsBuilder
-                .fromUriString("http://localhost:3000/oauth2/redirect")
+                .newInstance()
+                .scheme("http")
+                .host("localhost")
+                .port(3000)
+                .path("/oauth2/redirect")
                 .queryParam("accessToken", accessToken)
-//                .queryParam("refreshToken", refreshToken)
+                .encode()
                 .build()
                 .toUriString();
 
