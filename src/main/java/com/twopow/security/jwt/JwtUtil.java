@@ -7,6 +7,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.management.StringValueExp;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 @Slf4j
@@ -16,11 +17,19 @@ public class JwtUtil {
     static String secretKey = "이에이승팀의샘플비밀키입니다.";
 
     public static Date Minutes(int minutes) {
-        return new Date(System.currentTimeMillis() + (6000L) * minutes);
+        long expiredTime = 1000 * 60L * minutes;
+        Date now = new Date();
+        now.setTime(now.getTime()+expiredTime);
+        log.trace("{}",now);
+        return now;
     }
 
     public static Date Days(int days) {
-        return new Date(System.currentTimeMillis() + (6000L * 60 * 24) * days);
+        long expiredTime = 1000*60L*60L*24L*days;
+        Date now = new Date();
+        now.setTime(now.getTime()+expiredTime);
+        log.trace("{}",now);
+        return now;
     }
 
     public static String CreateToken(User user, Date expiresAt) {
