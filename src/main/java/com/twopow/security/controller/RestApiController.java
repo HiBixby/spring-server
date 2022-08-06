@@ -30,7 +30,7 @@ public class RestApiController {
     }
 
     @PostMapping("/auth/reissue")
-    public ResponseEntity<?> reissue(JwtTokens jwtTokens) {
+    public ResponseEntity<?> reissue(@RequestBody JwtTokens jwtTokens) {
         return authInfoService.JWT토큰재발급(jwtTokens);
     }
 
