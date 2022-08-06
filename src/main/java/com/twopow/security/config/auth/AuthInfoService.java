@@ -70,10 +70,10 @@ public class AuthInfoService {
         log.trace("[Reissue] Front-end 에서 Back-end 로 보낸 Access Token : {}", oldAccessToken);
         log.trace("[Reissue] Front-end 에서 Back-end 로 보낸 Refresh Token : {}", oldRefreshToken);
 
-        int id = JwtUtil.getIdFromJWT(oldAccessToken);
-        User user = userRepository.findById(id);
+        String username = JwtUtil.getUsernameFromJWT(oldAccessToken);
+        User user = userRepository.findByUsername(username);
 
-        if (Objects.requireNonNull(oldRefreshToken).equals(user.getRefreshToken()) && JwtUtil.DecodeToken(oldRefreshToken) != null) {
+        if ((oldRefreshToken).equals(user.getRefreshToken()) && JwtUtil.DecodeToken(oldRefreshToken) != null) {
             String newAccessToken = JwtUtil.CreateToken(user, JwtUtil.Minutes(30));
             String newRefreshToken = JwtUtil.CreateToken(null, JwtUtil.Days(14));
             JwtTokens newJwtTokens = JwtTokens.builder()

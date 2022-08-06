@@ -52,23 +52,18 @@ public class JwtUtil {
         return Jwts.parser().setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8)).parseClaimsJws(encodedJwtToken).getBody();
     }
 
-    public static int getIdFromJWT(String expiredAccessToken) {
+    public static String getUsernameFromJWT(String expiredAccessToken) {
         try {
             Claims claims = Jwts.parser().setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8)).parseClaimsJws(expiredAccessToken).getBody();
-            String stringId = claims.getId();
-            int id = 0;
-            if (stringId != null) {
-                id = Integer.parseInt(stringId);
-            }
-            return id;
+            return claims.get("username",String.class);
         } catch (ExpiredJwtException e) {
-            String id = e.getClaims().getId();
-            log.trace("stringId: {}", id);
-            return Integer.parseInt(id);
+            String username = e.getClaims().get("username",String.class);
+            log.trace("username from expired JWT: {}", username);
+            return username;
         } catch (Exception ignored) {
 
         }
-        return 0;
+        return null;
     }
 
     public static boolean isExpiredJwt(String jwtToken) {
