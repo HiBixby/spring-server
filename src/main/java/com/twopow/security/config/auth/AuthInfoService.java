@@ -68,15 +68,16 @@ public class AuthInfoService {
         String oldAccessToken = jwtTokens.getAccessToken();
         String oldRefreshToken = null;
         Cookie[] cookies = request.getCookies();
-        for(Cookie c: cookies){
-            if (c.getName().equals("refreshToken")){
-                oldRefreshToken = c.getValue();
-                log.trace("[Reissue] refreshToken 쿠키를 찾았습니다!");
-                break;
+        if (cookies!=null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals("refreshToken")) {
+                    oldRefreshToken = c.getValue();
+                    log.trace("[Reissue] refreshToken 쿠키를 찾았습니다!");
+                    break;
+                }
             }
         }
-        
-        if (oldRefreshToken==null){
+        else{
             oldRefreshToken=jwtTokens.getRefreshToken();
         }
 
