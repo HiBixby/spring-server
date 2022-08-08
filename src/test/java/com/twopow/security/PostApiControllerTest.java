@@ -102,6 +102,7 @@ public class PostApiControllerTest {
 
         // create headers
         HttpHeaders headers = new HttpHeaders();
+        headers.add("Cookie","refreshToken="+refreshToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
