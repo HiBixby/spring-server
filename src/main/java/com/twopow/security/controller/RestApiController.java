@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -30,8 +32,8 @@ public class RestApiController {
     }
 
     @PostMapping("/auth/reissue")
-    public ResponseEntity<?> reissue(@RequestBody JwtTokens jwtTokens) {
-        return authInfoService.JWT토큰재발급(jwtTokens);
+    public ResponseEntity<?> reissue(HttpServletRequest request, @RequestBody JwtTokens jwtTokens) {
+        return authInfoService.JWT토큰재발급(request,jwtTokens);
     }
 
     @PostMapping("/auth/validity")

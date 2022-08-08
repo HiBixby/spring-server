@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.Optional;
@@ -62,10 +64,17 @@ public class AuthInfoService {
     }
 
     @Transactional
-    public ResponseEntity<?> JWT토큰재발급(JwtTokens jwtTokens) {
+    public ResponseEntity<?> JWT토큰재발급(HttpServletRequest request, JwtTokens jwtTokens) {
         String oldAccessToken = jwtTokens.getAccessToken();
-        String oldRefreshToken = jwtTokens.getRefreshToken();
-
+        String oldRefreshToken = null;
+        Cookie[] cookies = request.getCookies();
+        for(Cookie c: cookies){
+            if (c.getName().equals("refreshToken")){
+                oldRefreshToken = c.getValue();
+                log.trace("[Reissue] refreshToken 쿠키를 찾았습니다!");
+                break;
+            }
+        }
 
         log.trace("[Reissue] Front-end 에서 Back-end 로 보낸 Access Token : {}", oldAccessToken);
         log.trace("[Reissue] Front-end 에서 Back-end 로 보낸 Refresh Token : {}", oldRefreshToken);
