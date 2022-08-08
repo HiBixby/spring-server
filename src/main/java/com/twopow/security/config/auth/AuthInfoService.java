@@ -75,6 +75,10 @@ public class AuthInfoService {
                 break;
             }
         }
+        
+        if (oldRefreshToken==null){
+            oldRefreshToken=jwtTokens.getRefreshToken();
+        }
 
         log.trace("[Reissue] Front-end 에서 Back-end 로 보낸 Access Token : {}", oldAccessToken);
         log.trace("[Reissue] Front-end 에서 Back-end 로 보낸 Refresh Token : {}", oldRefreshToken);
