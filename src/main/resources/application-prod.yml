@@ -1,3 +1,7 @@
+server:
+  host:
+    spring: api.2-pow.com
+    react: 2-pow.com
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
