@@ -6,6 +6,7 @@ import com.twopow.security.model.User;
 import com.twopow.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+    @Value("${server.host.react}")
+    private String reactHost;
     private final UserRepository userRepository;
 
     @Override
@@ -32,7 +35,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String targetUrl = UriComponentsBuilder
                 .newInstance()
                 .scheme("http")
-                .host("localhost")
+                .host(reactHost)
                 .port(3000)
                 .path("/oauth2/redirect")
                 .queryParam("accessToken", accessToken)
