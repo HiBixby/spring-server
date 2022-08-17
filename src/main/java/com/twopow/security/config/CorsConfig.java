@@ -26,7 +26,7 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         //기본 포트인 80 포트라면 내용 없애기
         if (Objects.equals(reactPort, "80")){
-            reactPort = "";
+            reactPort = null;
             reactPath = "";
         }
         String originUrl = UriComponentsBuilder
