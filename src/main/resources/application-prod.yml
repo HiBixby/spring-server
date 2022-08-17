@@ -1,7 +1,13 @@
 server:
-  host:
-    spring: api.2-pow.com
-    react: 2-pow.com
+  spring:
+    scheme: http
+    host: 2-pow.com
+    port: 8080
+  react:
+    scheme: http
+    host: 2-pow.com
+    port: 8080
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -38,7 +44,7 @@ spring:
             - profile_image
             client-name: Naver
             authorization-grant-type: authorization_code #oauth2 방식
-            redirect-uri: http://api.2-pow.com:8080/login/oauth2/code/naver
+            redirect-uri: http://${{secrets.SPRING_SERVER_IP}}:8080/login/oauth2/code/naver
 
         provider:
           naver:

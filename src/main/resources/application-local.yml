@@ -1,7 +1,13 @@
 server:
-  host:
-    spring: localhost
-    react: localhost
+  spring:
+    scheme: http
+    host: localhost
+    port: 3000
+  react:
+    scheme: http
+    host: localhost
+    port: 8080
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

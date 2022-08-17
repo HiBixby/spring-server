@@ -18,16 +18,20 @@ import java.io.IOException;
 @Component
 public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    @Value("${server.host.react}")
+    @Value("${server.react.scheme}")
+    private String reactScheme;
+    @Value("${server.react.host}")
     private String reactHost;
+    @Value("${server.react.port}")
+    private String reactPort;
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.error("[Authentication Failure] 오류가 생겨 back-end 에서 프론트의 메인 페이지로 redirect 합니다.");
         String targetUrl = UriComponentsBuilder
                 .newInstance()
-                .scheme("http")
+                .scheme(reactScheme)
                 .host(reactHost)
-                .port(3000)
+                .port(reactPort)
                 .path("/")
                 .encode()
                 .build()

@@ -20,8 +20,12 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    @Value("${server.host.react}")
+    @Value("${server.react.scheme}")
+    private String reactScheme;
+    @Value("${server.react.host}")
     private String reactHost;
+    @Value("${server.react.port}")
+    private String reactPort;
     private final UserRepository userRepository;
 
     @Override
@@ -34,9 +38,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         userRepository.save(user);
         String targetUrl = UriComponentsBuilder
                 .newInstance()
-                .scheme("http")
+                .scheme(reactScheme)
                 .host(reactHost)
-                .port(3000)
+                .port(reactPort)
                 .path("/oauth2/redirect")
                 .queryParam("accessToken", accessToken)
                 .encode()
