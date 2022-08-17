@@ -1,5 +1,6 @@
 package com.twopow.security.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +9,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Objects;
+
+@Slf4j
 @Configuration
 public class CorsConfig {
     @Value("${server.react.scheme}")
@@ -16,17 +20,25 @@ public class CorsConfig {
     private String reactHost;
     @Value("${server.react.port}")
     private String reactPort;
+
+    private String reactPath ="/";
     @Bean
     public CorsFilter corsFilter() {
+        //기본 포트인 80 포트라면 내용 없애기
+        if (Objects.equals(reactPort, "80")){
+            reactPort = "";
+            reactPath = "";
+        }
         String originUrl = UriComponentsBuilder
                 .newInstance()
                 .scheme(reactScheme)
                 .host(reactHost)
                 .port(reactPort)
-//                .path("/")
+                .path(reactPath)
                 .encode()
                 .build()
                 .toUriString();
+        log.trace(originUrl);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
