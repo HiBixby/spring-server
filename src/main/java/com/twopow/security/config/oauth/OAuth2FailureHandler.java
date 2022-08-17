@@ -24,6 +24,7 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
     private String reactHost;
     @Value("${server.react.port}")
     private String reactPort;
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.error("[Authentication Failure] 오류가 생겨 back-end 에서 프론트의 메인 페이지로 redirect 합니다.");
