@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,6 +37,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //        String refreshToken = JwtUtil.CreateToken(null,JwtUtil.Days(14));
         user.setRefreshToken("false");
         userRepository.save(user);
+        if (Objects.equals(reactPort, "80")){
+            reactPort=null;
+        }
         String targetUrl = UriComponentsBuilder
                 .newInstance()
                 .scheme(reactScheme)
