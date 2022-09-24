@@ -1,0 +1,5 @@
+build/
+*.gitignore
+bin
+.gradle
+src/main/resources/application-release.yml
