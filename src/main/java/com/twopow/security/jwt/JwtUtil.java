@@ -6,6 +6,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.management.StringValueExp;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +15,7 @@ import java.util.Date;
 public class JwtUtil {
 
     private static final String subject = "이에이승";
-    static String secretKey = "이에이승팀의샘플비밀키입니다.";
+    static String secretKey = JwtSecretKey.secretKey;
 
     public static Date Minutes(int minutes) {
         return new Date(System.currentTimeMillis()+1000*60L*minutes);
