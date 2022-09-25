@@ -15,8 +15,7 @@ import java.util.Date;
 public class JwtUtil {
 
     private static final String subject = "이에이승";
-    @Value("${jwt.secret-key}")
-    static String secretKey;
+    static String secretKey = JwtSecretKey.secretKey;
 
     public static Date Minutes(int minutes) {
         return new Date(System.currentTimeMillis()+1000*60L*minutes);
